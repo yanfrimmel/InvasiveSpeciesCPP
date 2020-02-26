@@ -16,4 +16,4 @@ C++ implementation for [InvasiveSpecies](https://github.com/yanfrimmel/InvasiveS
 
 ```bash
     cd build
-    ./InvasiveSpeciesCPP {SREEN_WIDTH} {SCREEN_HEIGHT} {IS_FULL_SCREEN}
+    ./InvasiveSpeciesCPP {SCREEN_WIDTH} {SCREEN_HEIGHT} {IS_FULL_SCREEN}
