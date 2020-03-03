@@ -11,6 +11,8 @@ int main(int argc, char *argv[])
         windowHeight = atoi(argv[2]);
         flags = atoi(argv[3]);
     }
-    Game *game = new Game(windowWidth, windowHeight, flags);
+    std::unique_ptr<Game> game (new Game(windowWidth, windowHeight, flags));
+    game->play();
+
     return 0;
 }

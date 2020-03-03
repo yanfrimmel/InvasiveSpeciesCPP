@@ -5,9 +5,16 @@ Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeig
     _windowWidth = windowWidth;
     _windowHeight = windowHeight;
     _flags = flags;
-    if (initializeSdl()) {
-        _window = createWindow();
-        _renderer = createRenderer();
+    if (initializeSdl())
+    {
+        _window = std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>>(
+            createWindow(),
+            SDL_DestroyWindow
+        );
+        _renderer = std::unique_ptr<SDL_Renderer, std::function<void(SDL_Renderer *)>>(
+            createRenderer(),
+            SDL_DestroyRenderer
+        );
         printf("Graphics created\n");
     }
 }
@@ -23,36 +30,36 @@ bool Graphics::initializeSdl() const
     return true;
 }
 
-SDL_Window *Graphics::createWindow() const
+SDL_Window *Graphics::createWindow()
 {
-
     SDL_Window *window = SDL_CreateWindow("InvasiveSpecies",
-                                          SDL_WINDOWPOS_CENTERED,
-                                          SDL_WINDOWPOS_CENTERED,
+                                          SDL_WINDOWPOS_UNDEFINED,
+                                          SDL_WINDOWPOS_UNDEFINED,
                                           _windowWidth, _windowHeight,
                                           _flags);
     if (!window)
     {
         printf("error creating window: %s\n", SDL_GetError());
+        SDL_Log("Could not create a window: %s", SDL_GetError());
         SDL_Quit();
         return NULL;
     }
     return window;
 }
 
-SDL_Renderer *Graphics::createRenderer() const
+SDL_Renderer *Graphics::createRenderer()
 {
     // create a renderer, which sets up the graphics hardware
     Uint32 render_flags = SDL_RENDERER_ACCELERATED |
                           SDL_RENDERER_PRESENTVSYNC |
                           SDL_RENDERER_TARGETTEXTURE;
 
-    SDL_Renderer *renderer = SDL_CreateRenderer(_window, -1, render_flags);
+    SDL_Renderer *renderer = SDL_CreateRenderer(_window.get(), -1, render_flags);
     if (!renderer)
     {
         printf("error creating renderer: %s\n", SDL_GetError());
-        SDL_DestroyWindow(_window);
-        SDL_Quit();
+        SDL_Log("error creating renderer: %s", SDL_GetError());
+        quitSdl();
         return NULL;
     }
 
@@ -69,15 +76,36 @@ void Graphics::fpsCounterLoop(Uint32 *startclock, Uint32 *deltaclock, Uint32 *cu
     }
 }
 
-void Graphics::quitSdl() const
+void Graphics::quitSdl()
 {
-    SDL_DestroyRenderer(_renderer);
-    SDL_DestroyWindow(_window);
+    _renderer.reset(nullptr);
+    _window.reset(nullptr);
     SDL_Quit();
 }
 
-Graphics::~Graphics() 
-{ 
+SDL_Texture * Graphics::loadTexture(const char *imagePath)
+{
+    SDL_Texture *texture = IMG_LoadTexture(_renderer.get(), imagePath);
+    if (!texture)
+    {
+        printf("error creating texture\n");
+        SDL_Log("error creating texture: %s", SDL_GetError());
+        quitSdl();
+        return NULL;
+    }
+    return texture;
+}
+
+Graphics::RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
+{
+    SDL_Rect dest;
+    SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
+    RectAndTexture RectAndTexture = {dest, texture};
+    return RectAndTexture;
+}
+
+Graphics::~Graphics()
+{
     printf("Graphics destructor\n");
     quitSdl();
-} 
+}
