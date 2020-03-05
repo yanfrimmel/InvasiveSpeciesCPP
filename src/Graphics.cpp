@@ -1,10 +1,8 @@
 #include "Graphics.h"
 
-Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, int flags)
+Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, int flags, unsigned short int fpsCap) 
+    : _windowWidth{windowWidth}, _windowHeight{windowHeight}, _flags{flags}, _fpsCap{fpsCap}
 {
-    _windowWidth = windowWidth;
-    _windowHeight = windowHeight;
-    _flags = flags;
     if (initializeSdl())
     {
         _window = std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>>(
@@ -83,7 +81,7 @@ void Graphics::quitSdl()
     SDL_Quit();
 }
 
-SDL_Texture * Graphics::loadTexture(const char *imagePath)
+SDL_Texture *Graphics::loadTexture(const char *imagePath)
 {
     SDL_Texture *texture = IMG_LoadTexture(_renderer.get(), imagePath);
     if (!texture)
@@ -96,14 +94,22 @@ SDL_Texture * Graphics::loadTexture(const char *imagePath)
     return texture;
 }
 
-Graphics::RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
+void Graphics::renderTexture(RectAndTexture rectAndTexture)
 {
-    SDL_Rect dest;
-    SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-    RectAndTexture RectAndTexture = {dest, texture};
-    return RectAndTexture;
+  SDL_RenderCopy(_renderer.get(), rectAndTexture.texture, NULL, rectAndTexture.rect);
 }
 
+Graphics::RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
+{
+    SDL_Rect *dest = new SDL_Rect();
+    SDL_QueryTexture(texture, NULL, NULL, &dest->w, &dest->h);
+    RectAndTexture rectAndTexture = {dest, texture};
+    return rectAndTexture;
+}
+
+unsigned short int Graphics::getFpsCap() {
+  return this->_fpsCap;
+}
 Graphics::~Graphics()
 {
     printf("Graphics destructor\n");

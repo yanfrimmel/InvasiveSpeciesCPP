@@ -1,30 +1,45 @@
 #include "Game.h"
-#include "Graphics.h"
 
-Game::Game(unsigned short int windowWidth, unsigned short int windowHeight, int flags)
+Game::Game(Configurations configurations)
 {
-    _windowWidth = windowWidth;
-    _windowHeight = windowHeight;
-    _flags = flags;
+  _graphics.reset(new Graphics(configurations.windowWidth, configurations.windowHeight, configurations.flags, configurations.fpsCap));
 }
 
 void Game::play()
 {
-    _graphics.reset(new Graphics(_windowWidth, _windowHeight, _flags));
     bool closeRequested = false;
-        while (!closeRequested) {
+    Uint32 startclock = 0;
+    Uint32 deltaclock = 0;
+    Uint32 currentFPS = 0;
+    int mouseX, mouseY, buttons;
+    int frameRateDelay = 1000.0f / _graphics->getFpsCap();
+
+    while (!closeRequested)
+    {
         // process events
         SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            if (event.type == SDL_QUIT) {
+        while (SDL_PollEvent(&event))
+        {
+            if (event.type == SDL_QUIT)
+            {
                 closeRequested = 1;
                 printf("closeRequested! quiting\n");
             }
         }
+
+        buttons = SDL_GetMouseState(&mouseX, &mouseY);
+
+        _graphics->fpsCounterLoop(&startclock, &deltaclock, &currentFPS);
+        if ((_graphics->getFpsCap()) < currentFPS)
+        {
+            SDL_Delay((frameRateDelay)-deltaclock);
+        }
+        startclock = SDL_GetTicks();
     }
+    _graphics.reset(nullptr);
 }
 
-Game::~Game() 
-{ 
+Game::~Game()
+{
     printf("Game destructor\n");
-} 
+}
