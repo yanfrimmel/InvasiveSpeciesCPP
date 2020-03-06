@@ -2,41 +2,53 @@
 
 Game::Game(Configurations configurations)
 {
-  _graphics.reset(new Graphics(configurations.windowWidth, configurations.windowHeight, configurations.flags, configurations.fpsCap));
+    start(configurations);
 }
 
-void Game::play()
+void Game::start(Configurations configurations)
 {
-    bool closeRequested = false;
-    Uint32 startclock = 0;
-    Uint32 deltaclock = 0;
-    Uint32 currentFPS = 0;
-    int mouseX, mouseY, buttons;
-    int frameRateDelay = 1000.0f / _graphics->getFpsCap();
-
-    while (!closeRequested)
+    _graphics.reset(new Graphics(
+                        configurations.windowWidth,
+                        configurations.windowHeight,
+                        configurations.flags));
+    // _gameState.reset(new GameState {}); //TODO: initail game state
+    _mouseInput.reset(new MouseInput {-1,-1, 0});
+    Uint32 sdlInitTicks = SDL_GetTicks();
+    gameLoop(configurations.fpsCap, 1000.0f / configurations.fpsCap, sdlInitTicks, sdlInitTicks);
+}
+//TODO: Draw grid & inital game state
+void Game::gameLoop(Uint32 fpsCap, Uint32 frameRateDelay, Uint32 startClock, Uint32 deltaClock)
+{
+    while (true)
     {
         // process events
         SDL_Event event;
         while (SDL_PollEvent(&event))
         {
-            if (event.type == SDL_QUIT)
-            {
-                closeRequested = 1;
-                printf("closeRequested! quiting\n");
+            switch (event.type) {
+                case SDL_QUIT:
+                    printf("closeRequested! quiting\n");
+                    return;
+                case SDL_MOUSEBUTTONDOWN:
+                    break;    
             }
         }
 
-        buttons = SDL_GetMouseState(&mouseX, &mouseY);
-
-        _graphics->fpsCounterLoop(&startclock, &deltaclock, &currentFPS);
-        if ((_graphics->getFpsCap()) < currentFPS)
+        _mouseInput.get()->mouseState = SDL_GetMouseState(&_mouseInput.get()->mouseX, &_mouseInput.get()->mouseY);
+        if (_mouseInput.get()->mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) 
         {
-            SDL_Delay((frameRateDelay)-deltaclock);
+            //TODO: on mouse click
         }
-        startclock = SDL_GetTicks();
+        Uint32 currentFPS = _graphics->calculateFpsAndDelta(&startClock, &deltaClock);
+
+        if ((fpsCap) < currentFPS)
+        {
+            SDL_Delay(frameRateDelay - deltaClock);
+        }
+
+        deltaClock = SDL_GetTicks() - startClock;
+        startClock = SDL_GetTicks();
     }
-    _graphics.reset(nullptr);
 }
 
 Game::~Game()

@@ -1,7 +1,7 @@
 #include "Graphics.h"
 
-Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, int flags, unsigned short int fpsCap) 
-    : _windowWidth{windowWidth}, _windowHeight{windowHeight}, _flags{flags}, _fpsCap{fpsCap}
+Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, Uint32 flags) 
+    : _windowWidth{windowWidth}, _windowHeight{windowHeight}, _flags{flags}
 {
     if (initializeSdl())
     {
@@ -64,14 +64,16 @@ SDL_Renderer *Graphics::createRenderer()
     return renderer;
 }
 
-void Graphics::fpsCounterLoop(Uint32 *startclock, Uint32 *deltaclock, Uint32 *currentFPS) const
+Uint32 Graphics::calculateFpsAndDelta(Uint32 *startclock, Uint32 *deltaclock) const
 {
+    Uint32 currentFPS = 0;
     *deltaclock = SDL_GetTicks() - *startclock;
     if (*deltaclock != 0)
     {
-        *currentFPS = 1000 / *deltaclock;
-        printf("FPS:%d\n", *currentFPS);
+        currentFPS = 1000.0f / *deltaclock;
+        printf("FPS:%d\n", currentFPS);
     }
+    return currentFPS;
 }
 
 void Graphics::quitSdl()
@@ -99,7 +101,7 @@ void Graphics::renderTexture(RectAndTexture rectAndTexture)
   SDL_RenderCopy(_renderer.get(), rectAndTexture.texture, NULL, rectAndTexture.rect);
 }
 
-Graphics::RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
+RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
 {
     SDL_Rect *dest = new SDL_Rect();
     SDL_QueryTexture(texture, NULL, NULL, &dest->w, &dest->h);
@@ -107,9 +109,6 @@ Graphics::RectAndTexture Graphics::createRectAndTexture(SDL_Texture *texture)
     return rectAndTexture;
 }
 
-unsigned short int Graphics::getFpsCap() {
-  return this->_fpsCap;
-}
 Graphics::~Graphics()
 {
     printf("Graphics destructor\n");
