@@ -10,6 +10,7 @@
 #include <memory>
 #include <functional>
 #include <list>
+#include <map>
 
 struct Configurations
 {
@@ -32,20 +33,37 @@ struct MouseInput
 	Uint32 mouseState;
 };
 
+enum TileType
+{
+	SOIL = 0,
+	GRASS = 1,
+	STONES = 2,
+	HUMAN_MALE = 3,
+	HUMAN_FEMALE = 4
+};
+
+static const TileType tileTypeVector[] = {SOIL, GRASS, STONES, HUMAN_MALE, HUMAN_FEMALE};
+
 struct GameObject
 {
 	Uint32 id;
 	Uint32 speed;
 	SDL_Point position;
-	SDL_Texture *texture;
-
+	TileType texture;
 };
 
 struct GameState
 {
 	SDL_Point camera;
-	GameObject player;
+	GameObject *player;
 	std::list<GameObject> gameObjects;
 };
+
+#define SOIL_IMAGE_PATH ("assets/images/soil.png")
+#define GRASS_IMAGE_PATH ("assets/images/grass.png")
+#define STONES_IMAGE_PATH ("assets/images/stones.png")
+#define HUMAN_MALE_IMAGE_PATH ("assets/images/human_male.png")
+#define HUMAN_FEMALE_IMAGE_PATH ("assets/images/human_female.png")
+
 
 #endif
