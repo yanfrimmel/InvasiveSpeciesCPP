@@ -18,6 +18,10 @@ Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeig
             loadAllTextures(),
             Graphics::destroyAllTextures
         );
+        _baseTile = std::unique_ptr<RectAndTexture, std::function<void(RectAndTexture *)>>(
+                        createBaseRect(),
+                        destroyRectAndTexture
+                    );
         printf("Graphics created\n");
     }
 }
@@ -28,6 +32,10 @@ bool Graphics::initializeSdl() const
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
     {
         printf("error initializing SDL: %s\n", SDL_GetError());
+        return false;
+    }
+    if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
+        printf("could not initialize sdl2_image: %s\n", IMG_GetError());
         return false;
     }
     return true;
@@ -94,10 +102,6 @@ SDL_Texture *Graphics::loadTexture(const char *imagePath)
     return texture;
 }
 
-void Graphics::renderTexture(RectAndTexture *rectAndTexture)
-{
-    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, NULL, rectAndTexture->rect);
-}
 
 RectAndTexture *Graphics::createRectFromTexture(SDL_Texture *texture)
 {
@@ -107,9 +111,39 @@ RectAndTexture *Graphics::createRectFromTexture(SDL_Texture *texture)
     return rectAndTexture;
 }
 
-void Graphics::renderGrid(std::map<TileType, SDL_Texture*> texturesMap)
+RectAndTexture *Graphics::createBaseRect()
 {
+    RectAndTexture *baseTile = createRectFromTexture((*_textures.get())[SOIL]);
+    return baseTile;
+}
 
+void Graphics::renderTexture(RectAndTexture *rectAndTexture)
+{
+    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, NULL, rectAndTexture->rect);
+}
+
+void Graphics::renderGrid(std::map<TileType, std::vector<SDL_Rect>> *tilesPositionsMap)
+{
+    SDL_RenderClear(_renderer.get());
+    _baseTile->texture = (*_textures.get())[SOIL];
+    // printf("renderGrid\n");
+    renderGridBackground(_baseTile.get());
+    SDL_RenderPresent(_renderer.get());
+}
+
+
+void Graphics::renderGridBackground(RectAndTexture *baseTile)
+{
+    // printf("renderGridBackground\n");
+    int tileWidth =  baseTile->rect->w;
+    int tileHeight = baseTile->rect->h;
+    for (int i = 0; i < _windowWidth; i += tileWidth) {
+        for (int j = 0; j < _windowHeight; j += tileHeight) {
+            renderTexture(baseTile);
+            baseTile->rect->x = i;
+            baseTile->rect->y = j;
+        }
+    }
 }
 
 const char* Graphics::getImagePathStringByTileType(TileType tileType)
@@ -152,8 +186,14 @@ void Graphics::destroyAllTextures (std::map<TileType, SDL_Texture*> *texturesMap
 
 }
 
+void Graphics::destroyRectAndTexture (RectAndTexture *rectAndTexture) {
+    delete rectAndTexture->rect;
+    SDL_DestroyTexture(rectAndTexture->texture);
+}
+
 void Graphics::quitSdl()
 {
+    IMG_Quit();
     SDL_Quit();
 }
 

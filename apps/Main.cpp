@@ -6,7 +6,7 @@ int main(int argc, char *argv[])
     unsigned short int windowWidth = 800;
     unsigned short int windowHeight = 600;
     Uint32 flags = 0;
-    unsigned short int fpsCap = 60;
+    unsigned short int fpsCap = 600;
     if (argc == 5) {
         windowWidth = atoi(argv[1]);
         windowHeight = atoi(argv[2]);

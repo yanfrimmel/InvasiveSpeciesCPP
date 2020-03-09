@@ -40,6 +40,8 @@ void Game::gameLoop(Uint32 fpsCap, Uint32 frameRateDelay, Uint32 startClock, Uin
         {
             //TODO: on mouse click
         }
+
+        _graphics->renderGrid(nullptr);
         Uint32 currentFPS = _graphics.get()->calculateFpsAndDelta(&startClock, &deltaClock);
 
         if ((fpsCap) < currentFPS)

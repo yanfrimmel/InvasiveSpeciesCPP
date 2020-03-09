@@ -9,7 +9,7 @@
 #include <SDL2/SDL_error.h>
 #include <memory>
 #include <functional>
-#include <list>
+#include <vector>
 #include <map>
 
 struct Configurations
@@ -56,7 +56,7 @@ struct GameState
 {
 	SDL_Point camera;
 	GameObject *player;
-	std::list<GameObject> gameObjects;
+	std::vector<GameObject> gameObjects;
 };
 
 #define SOIL_IMAGE_PATH ("assets/images/soil.png")

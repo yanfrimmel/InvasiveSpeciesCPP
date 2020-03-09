@@ -12,8 +12,10 @@ private:
     std::unique_ptr<SDL_Window, std::function<void(SDL_Window *)>> _window;
     std::unique_ptr<SDL_Renderer, std::function<void(SDL_Renderer *)>> _renderer;
     std::unique_ptr<std::map<TileType, SDL_Texture*>, std::function<void(std::map<TileType, SDL_Texture*> *)>> _textures;
+    std::unique_ptr<RectAndTexture, std::function<void(RectAndTexture *)>> _baseTile;
 
     static void destroyAllTextures (std::map<TileType, SDL_Texture*> *texturesMap);
+    static void destroyRectAndTexture (RectAndTexture *rectAndTexture);
     static const char* getImagePathStringByTileType(TileType tileType); 
     bool initializeSdl() const;
     SDL_Window *createWindow() ;
@@ -22,6 +24,8 @@ private:
     RectAndTexture *createRectFromTexture(SDL_Texture *texture);
     SDL_Texture *loadTexture(const char *imagePath);
     void renderTexture(RectAndTexture *rectAndTexture);
+    void renderGridBackground(RectAndTexture *baseTile);
+    RectAndTexture *createBaseRect();
     void quitSdl();
 
 public:
@@ -29,18 +33,8 @@ public:
     Uint32 calculateFpsAndDelta(Uint32 *startclock, Uint32 *deltaclock) const;
     int getWindowWidth() const { return _windowWidth; }
     int getWindowHeight() const { return _windowHeight; }
-    void renderGrid(std::map<TileType, SDL_Texture*> texturesMap);
+    void renderGrid(std::map<TileType, std::vector<SDL_Rect>> *tilesPositionsMap);
     ~Graphics();
 };
-
-// void destroyAllTextures (std::map<TileType, SDL_Texture*> *texturesMap)
-// {
-//     std::map<TileType, SDL_Texture*>::iterator it = texturesMap->begin();
-//     while (it != texturesMap->end()) 
-//     {
-//         SDL_DestroyTexture(it->second);
-//     }
-
-// }
 
 #endif
