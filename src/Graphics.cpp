@@ -61,9 +61,7 @@ SDL_Window *Graphics::createWindow()
 SDL_Renderer *Graphics::createRenderer()
 {
     // create a renderer, which sets up the graphics hardware
-    Uint32 render_flags = SDL_RENDERER_ACCELERATED |
-                          SDL_RENDERER_PRESENTVSYNC |
-                          SDL_RENDERER_TARGETTEXTURE;
+    Uint32 render_flags = SDL_RENDERER_ACCELERATED;
 
     SDL_Renderer *renderer = SDL_CreateRenderer(_window.get(), -1, render_flags);
     if (!renderer)
@@ -117,16 +115,11 @@ RectAndTexture *Graphics::createBaseRect()
     return baseTile;
 }
 
-void Graphics::renderTexture(RectAndTexture *rectAndTexture)
-{
-    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, NULL, rectAndTexture->rect);
-}
 
 void Graphics::renderGrid(std::map<TileType, std::vector<SDL_Rect>> *tilesPositionsMap)
 {
-    SDL_RenderClear(_renderer.get());
-    _baseTile->texture = (*_textures.get())[SOIL];
     // printf("renderGrid\n");
+    SDL_RenderClear(_renderer.get());
     renderGridBackground(_baseTile.get());
     SDL_RenderPresent(_renderer.get());
 }
@@ -137,6 +130,7 @@ void Graphics::renderGridBackground(RectAndTexture *baseTile)
     // printf("renderGridBackground\n");
     int tileWidth =  baseTile->rect->w;
     int tileHeight = baseTile->rect->h;
+    _baseTile->texture = (*_textures.get())[SOIL];
     for (int i = 0; i < _windowWidth; i += tileWidth) {
         for (int j = 0; j < _windowHeight; j += tileHeight) {
             renderTexture(baseTile);
@@ -144,6 +138,11 @@ void Graphics::renderGridBackground(RectAndTexture *baseTile)
             baseTile->rect->y = j;
         }
     }
+}
+
+void Graphics::renderTexture(RectAndTexture *rectAndTexture)
+{
+    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, NULL, rectAndTexture->rect);
 }
 
 const char* Graphics::getImagePathStringByTileType(TileType tileType)
@@ -160,6 +159,8 @@ const char* Graphics::getImagePathStringByTileType(TileType tileType)
         return HUMAN_MALE_IMAGE_PATH;
     case TileType::HUMAN_FEMALE:
         return HUMAN_FEMALE_IMAGE_PATH;
+    default:
+        break;   
     }
     return nullptr;
 }
