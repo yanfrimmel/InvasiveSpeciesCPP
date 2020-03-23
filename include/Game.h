@@ -2,6 +2,7 @@
 #define GAME_H
 
 #include "Graphics.h"
+#include "FPSCounter.h"
 
 class Game
 {
@@ -9,9 +10,10 @@ private:
 	std::unique_ptr<Graphics> _graphics;
 	std::unique_ptr<GameState> _gameState;
 	std::unique_ptr<MouseInput> _mouseInput;
+	std::unique_ptr<FPSCounter> _fpsCounter;
 
 	void start(Configurations configurations);
-	void gameLoop(Uint32 fpsCap = 60, Uint32 frameRateDelay = 1000, Uint32 startClock = 0, Uint32 deltaClock = 0);
+	void gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0);
 
 public:
 	Game(Configurations configurations);

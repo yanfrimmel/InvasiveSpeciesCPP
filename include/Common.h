@@ -6,6 +6,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 #include <SDL2/SDL_error.h>
 #include <memory>
 #include <functional>
@@ -58,7 +59,7 @@ struct GameState
 	GameObject *player;
 	std::vector<GameObject> gameObjects;
 };
-
+#define FONT_PATH ("assets/fonts/ObliviousFont.ttf")
 #define SOIL_IMAGE_PATH ("assets/images/soil.png")
 #define GRASS_IMAGE_PATH ("assets/images/grass.png")
 #define STONES_IMAGE_PATH ("assets/images/stones.png")

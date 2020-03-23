@@ -11,13 +11,15 @@ void Game::start(Configurations configurations)
                         configurations.windowWidth,
                         configurations.windowHeight,
                         configurations.flags));
-    // _gameState.reset(new GameState {}); //TODO: initail game state
+    _gameState.reset(new GameState {}); //TODO: initail game state
     _mouseInput.reset(new MouseInput { -1, -1, 0});
-    Uint32 sdlInitTicks = SDL_GetTicks();
-    gameLoop(configurations.fpsCap, 1000.0f / configurations.fpsCap, sdlInitTicks, sdlInitTicks);
+    _fpsCounter.reset(new FPSCounter());
+    _fpsCounter->fpsInit();
+
+    gameLoop(configurations.fpsCap, 1000.0f / configurations.fpsCap);
 }
 //TODO: Draw grid & inital game state
-void Game::gameLoop(Uint32 fpsCap, Uint32 frameRateDelay, Uint32 startClock, Uint32 deltaClock)
+void Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay)
 {
     while (true)
     {
@@ -40,17 +42,17 @@ void Game::gameLoop(Uint32 fpsCap, Uint32 frameRateDelay, Uint32 startClock, Uin
         {
             //TODO: on mouse click
         }
+        float averageFPS = _fpsCounter->getAverageFramesPerSecond();
 
+        _graphics->clearRender();
         _graphics->renderGrid(nullptr);
-        Uint32 currentFPS = _graphics.get()->calculateFpsAndDelta(&startClock, &deltaClock);
-
-        if ((fpsCap) < currentFPS)
+        _graphics->renderText("FPS: " + std::to_string(averageFPS), {255, 255, 0, 255}, 0, 0);
+        _graphics->presentRender();
+        if (fpsCap < averageFPS)
         {
-            SDL_Delay(frameRateDelay - deltaClock);
+            SDL_Delay(minFrameRateDelay);
         }
-
-        deltaClock = SDL_GetTicks() - startClock;
-        startClock = SDL_GetTicks();
+        _fpsCounter->fpsThink();
     }
 }
 
