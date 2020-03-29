@@ -3,6 +3,7 @@
 
 #include "Graphics.h"
 #include "FPSCounter.h"
+#include "GameState.h"
 
 class Game
 {
@@ -14,6 +15,7 @@ private:
 
 	void start(Configurations configurations);
 	void gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0);
+	std::map<TileType, std::vector<SDL_Point>> convertStateToGraphicsMap();
 
 public:
 	Game(Configurations configurations);

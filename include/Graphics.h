@@ -26,7 +26,8 @@ private:
     RectAndTexture *createRectFromTexture(SDL_Texture *texture);
     SDL_Texture *loadTexture(const char *imagePath);
     void renderTexture(RectAndTexture *rectAndTexture);
-    void renderGridBackground(RectAndTexture *baseTile);
+    void renderGameObjects(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap);
+    void renderGridBackground();
     RectAndTexture *createBaseRect();
     TTF_Font * getFontFromFile(const char *file, int ptsize);
     TTF_Font * createRegularFont();
@@ -36,7 +37,7 @@ public:
     Graphics(unsigned short int windowWidth = 800, unsigned short int windowHeight = 600, Uint32 flags = 0);
     int getWindowWidth() const { return _windowWidth; }
     int getWindowHeight() const { return _windowHeight; }
-    void renderGrid(std::map<TileType, std::vector<SDL_Rect>> *tilesPositionsMap);
+    void renderGrid(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap);
     void renderText(std::string textureText, SDL_Color textColor, int x, int y);
     void clearRender();
     void presentRender();

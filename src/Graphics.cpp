@@ -117,25 +117,40 @@ void Graphics::presentRender()
     SDL_RenderPresent(_renderer.get());
 }
 
-void Graphics::renderGrid(std::map<TileType, std::vector<SDL_Rect>> *tilesPositionsMap)
+void Graphics::renderGrid(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap)
 {
     // printf("renderGrid\n");
-    renderGridBackground(_baseTile.get());
+    renderGridBackground();
+    renderGameObjects(gameObjectsPositionsMap);
 }
 
-void Graphics::renderGridBackground(RectAndTexture *baseTile)
+void Graphics::renderGameObjects(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap)
+{
+    for (auto current : gameObjectsPositionsMap)
+    {
+        _baseTile->texture = (*_textures.get())[current.first];
+        for (auto currentPosition : current.second)
+        {
+            _baseTile->rect->x = currentPosition.x;
+            _baseTile->rect->y = currentPosition.y;
+            renderTexture(_baseTile.get());
+        }
+    }
+}
+
+void Graphics::renderGridBackground()
 {
     // printf("renderGridBackground\n");
-    int tileWidth = baseTile->rect->w;
-    int tileHeight = baseTile->rect->h;
+    int tileWidth = _baseTile->rect->w;
+    int tileHeight = _baseTile->rect->h;
     _baseTile->texture = (*_textures.get())[SOIL];
     for (int i = 0; i < _windowWidth; i += tileWidth)
     {
         for (int j = 0; j < _windowHeight; j += tileHeight)
         {
-            renderTexture(baseTile);
-            baseTile->rect->x = i;
-            baseTile->rect->y = j;
+            _baseTile->rect->x = i;
+            _baseTile->rect->y = j;
+            renderTexture(_baseTile.get());
         }
     }
 }

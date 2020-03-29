@@ -45,20 +45,6 @@ enum TileType
 
 static const TileType tileTypeVector[] = {SOIL, GRASS, STONES, HUMAN_MALE, HUMAN_FEMALE};
 
-struct GameObject
-{
-	Uint32 id;
-	Uint32 speed;
-	SDL_Point position;
-	TileType texture;
-};
-
-struct GameState
-{
-	SDL_Point camera;
-	GameObject *player;
-	std::vector<GameObject> gameObjects;
-};
 #define FONT_PATH ("assets/fonts/ObliviousFont.ttf")
 #define SOIL_IMAGE_PATH ("assets/images/soil.png")
 #define GRASS_IMAGE_PATH ("assets/images/grass.png")

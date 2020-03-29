@@ -11,12 +11,22 @@ void Game::start(Configurations configurations)
                         configurations.windowWidth,
                         configurations.windowHeight,
                         configurations.flags));
-    _gameState.reset(new GameState {}); //TODO: initail game state
+    _gameState.reset(new GameState()); //TODO: initail game state
     _mouseInput.reset(new MouseInput { -1, -1, 0});
     _fpsCounter.reset(new FPSCounter());
     _fpsCounter->fpsInit();
 
     gameLoop(configurations.fpsCap, 1000.0f / configurations.fpsCap);
+}
+
+std::map<TileType, std::vector<SDL_Point>> Game::convertStateToGraphicsMap()
+{
+    return [this]() -> std::map<TileType, std::vector<SDL_Point>>
+    {
+        return std::map<TileType, std::vector<SDL_Point>>{
+            {   _gameState->getPlayer()->getTileType(), {_gameState->getPlayer()->getPosition()}}
+        };
+    }();
 }
 //TODO: Draw grid & inital game state
 void Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay)
@@ -45,7 +55,7 @@ void Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay)
         float averageFPS = _fpsCounter->getAverageFramesPerSecond();
 
         _graphics->clearRender();
-        _graphics->renderGrid(nullptr);
+        _graphics->renderGrid(convertStateToGraphicsMap());
         _graphics->renderText("FPS: " + std::to_string(averageFPS), {255, 255, 0, 255}, 0, 0);
         _graphics->presentRender();
         if (fpsCap < averageFPS)
