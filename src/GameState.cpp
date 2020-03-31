@@ -3,7 +3,7 @@
 GameState::GameState()
 {
 	_camera = {0,0};
-	_gameObjects.push_back(GameObject(0, 10 ,{200, 200}, HUMAN_MALE));
+	_gameObjects.push_back(GameObject(32, 100 ,{400, 400}, HUMAN_MALE));
 	_player = &_gameObjects[0];
 }
 

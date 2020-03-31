@@ -15,6 +15,8 @@ private:
 
 	void start(Configurations configurations);
 	void gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0);
+	void handleMouseState(float fps);
+	bool checkForSDLQuitEvents();
 	std::map<TileType, std::vector<SDL_Point>> convertStateToGraphicsMap();
 
 public:

@@ -1,7 +1,7 @@
 #include "Graphics.h"
 
 Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, Uint32 flags)
-    : _windowWidth{windowWidth}, _windowHeight{windowHeight}, _flags{flags}
+    : _windowWidth(windowWidth), _windowHeight(windowHeight), _flags(flags)
 {
     if (initializeSdl())
     {
