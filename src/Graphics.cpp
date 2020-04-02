@@ -1,6 +1,6 @@
 #include "Graphics.h"
 
-Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeight, Uint32 flags)
+Graphics::Graphics(Uint32 windowWidth, Uint32 windowHeight, Uint32 flags)
     : _windowWidth(windowWidth), _windowHeight(windowHeight), _flags(flags)
 {
     if (initializeSdl())
@@ -21,32 +21,32 @@ Graphics::Graphics(unsigned short int windowWidth, unsigned short int windowHeig
         _globalFont = std::unique_ptr<TTF_Font, std::function<void(TTF_Font *)>>(
                           createRegularFont(),
                           destroyFont);
-        printf("Graphics created\n");
+        std::cout <<"Graphics created\n";
     }
 }
 
-bool Graphics::initializeSdl() const
+auto Graphics::initializeSdl() -> bool
 {
     // attempt to initialize graphics and timer system
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0)
     {
-        printf("error initializing SDL: %s\n", SDL_GetError());
+        std::cout << "error initializing SDL: %s\n" << SDL_GetError();
         return false;
     }
     if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG))
     {
-        printf("could not initialize sdl2_image: %s\n", IMG_GetError());
+        std::cout << "could not initialize sdl2_image: %s\n" << IMG_GetError();
         return false;
     }
     if (TTF_Init() == -1)
     {
-        printf("SDL_ttf could not initialize! SDL_ttf Error: %s\n", TTF_GetError());
+        std::cout << "SDL_ttf could not initialize! SDL_ttf Error: %s\n" << TTF_GetError();
         return false;
     }
     return true;
 }
 
-SDL_Window *Graphics::createWindow()
+auto Graphics::createWindow() -> SDL_Window*
 {
     SDL_Window *window = SDL_CreateWindow("InvasiveSpecies",
                                           SDL_WINDOWPOS_UNDEFINED,
@@ -55,15 +55,15 @@ SDL_Window *Graphics::createWindow()
                                           _flags);
     if (!window)
     {
-        printf("error creating window: %s\n", SDL_GetError());
-        SDL_Log("Could not create a window: %s", SDL_GetError());
+        std::cout << "error creating window: %s\n" << SDL_GetError();
+        std::cout << "Could not create a window: %s" << SDL_GetError();
         SDL_Quit();
-        return NULL;
+        return nullptr;
     }
     return window;
 }
 
-SDL_Renderer *Graphics::createRenderer()
+auto Graphics::createRenderer() -> SDL_Renderer*
 {
     // create a renderer, which sets up the graphics hardware
     Uint32 render_flags = SDL_RENDERER_ACCELERATED;
@@ -71,64 +71,64 @@ SDL_Renderer *Graphics::createRenderer()
     SDL_Renderer *renderer = SDL_CreateRenderer(_window.get(), -1, render_flags);
     if (!renderer)
     {
-        printf("error creating renderer: %s\n", SDL_GetError());
-        SDL_Log("error creating renderer: %s", SDL_GetError());
+        std::cout << "error creating renderer: %s\n" << SDL_GetError();
+        std::cout << "error creating renderer: %s" << SDL_GetError();
         quitSdl();
-        return NULL;
+        return nullptr;
     }
 
     return renderer;
 }
 
-SDL_Texture *Graphics::loadTexture(const char *imagePath)
+auto Graphics::loadTexture(const char *imagePath) -> SDL_Texture*
 {
     SDL_Texture *texture = IMG_LoadTexture(_renderer.get(), imagePath);
     if (!texture)
     {
-        printf("error creating texture\n");
-        SDL_Log("error creating texture: %s", SDL_GetError());
+        std::cout << "error creating texture\n";
+        std::cout << "error creating texture: %s";
         quitSdl();
-        return NULL;
+        return nullptr;
     }
     return texture;
 }
 
-RectAndTexture *Graphics::createRectFromTexture(SDL_Texture *texture)
+auto Graphics::createRectFromTexture(SDL_Texture *texture) -> RectAndTexture*
 {
-    SDL_Rect *dest = new SDL_Rect();
-    SDL_QueryTexture(texture, NULL, NULL, &dest->w, &dest->h);
-    RectAndTexture *rectAndTexture = new RectAndTexture{dest, texture};
+    auto *dest = new SDL_Rect();
+    SDL_QueryTexture(texture, nullptr, nullptr, &dest->w, &dest->h);
+    auto *rectAndTexture = new RectAndTexture{dest, texture};
     return rectAndTexture;
 }
 
-RectAndTexture *Graphics::createBaseRect()
+auto Graphics::createBaseRect() -> RectAndTexture*
 {
-    RectAndTexture *baseTile = createRectFromTexture((*_textures.get())[SOIL]);
+    RectAndTexture *baseTile = createRectFromTexture((*_textures)[SOIL]);
     return baseTile;
 }
 
-void Graphics::clearRender()
+auto Graphics::clearRender() -> void
 {
     SDL_RenderClear(_renderer.get());
 }
 
-void Graphics::presentRender()
+auto Graphics::presentRender() -> void
 {
     SDL_RenderPresent(_renderer.get());
 }
 
-void Graphics::renderGrid(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap)
+auto Graphics::renderGrid(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void
 {
     // printf("renderGrid\n");
     renderGridBackground();
     renderGameObjects(gameObjectsPositionsMap);
 }
 
-void Graphics::renderGameObjects(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap)
+auto Graphics::renderGameObjects(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void
 {
-    for (auto current : gameObjectsPositionsMap)
+    for (const auto& current : gameObjectsPositionsMap)
     {
-        _baseTile->texture = (*_textures.get())[current.first];
+        _baseTile->texture = (*_textures)[current.first];
         for (auto currentPosition : current.second)
         {
             _baseTile->rect->x = currentPosition.x;
@@ -138,12 +138,12 @@ void Graphics::renderGameObjects(std::map<TileType, std::vector<SDL_Point>> game
     }
 }
 
-void Graphics::renderGridBackground()
+auto Graphics::renderGridBackground() -> void
 {
     // printf("renderGridBackground\n");
     int tileWidth = _baseTile->rect->w;
     int tileHeight = _baseTile->rect->h;
-    _baseTile->texture = (*_textures.get())[SOIL];
+    _baseTile->texture = (*_textures)[SOIL];
     for (int i = 0; i < _windowWidth; i += tileWidth)
     {
         for (int j = 0; j < _windowHeight; j += tileHeight)
@@ -155,12 +155,12 @@ void Graphics::renderGridBackground()
     }
 }
 
-void Graphics::renderTexture(RectAndTexture *rectAndTexture)
+auto Graphics::renderTexture(RectAndTexture *rectAndTexture) -> void
 {
-    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, NULL, rectAndTexture->rect);
+    SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, nullptr, rectAndTexture->rect);
 }
 
-const char *Graphics::getImagePathStringByTileType(TileType tileType)
+auto Graphics::getImagePathStringByTileType(TileType tileType) -> const char*
 {
     switch (tileType)
     {
@@ -180,9 +180,9 @@ const char *Graphics::getImagePathStringByTileType(TileType tileType)
     return nullptr;
 }
 
-std::map<TileType, SDL_Texture *> *Graphics::loadAllTextures()
+auto Graphics::loadAllTextures() -> std::map<TileType, SDL_Texture *>*
 {
-    std::map<TileType, SDL_Texture *> *texturesMap = new std::map<TileType, SDL_Texture *>();
+    auto texturesMap = new std::map<TileType, SDL_Texture *>();
     for (auto currentTileType : tileTypeVector)
     {
         (*texturesMap)[currentTileType] = loadTexture(getImagePathStringByTileType(currentTileType));
@@ -190,7 +190,7 @@ std::map<TileType, SDL_Texture *> *Graphics::loadAllTextures()
     return texturesMap;
 }
 
-void Graphics::destroyAllTextures(std::map<TileType, SDL_Texture *> *texturesMap)
+auto Graphics::destroyAllTextures(std::map<TileType, SDL_Texture *> *texturesMap) -> void
 {
 
     for (auto const& p : *texturesMap)
@@ -200,38 +200,38 @@ void Graphics::destroyAllTextures(std::map<TileType, SDL_Texture *> *texturesMap
 
     texturesMap->clear();
     delete texturesMap;
-    printf("destroyAllTextures done\n");
+    std::cout << "destroyAllTextures done\n";
 }
 
-void Graphics::destroyFont(TTF_Font * font)
+auto Graphics::destroyFont(TTF_Font * font) -> void
 {
     TTF_CloseFont(font);
-    printf("destroyFont done\n");
+    std::cout << "destroyFont done\n";
 }
 
-void Graphics::destroyRectAndTexture(RectAndTexture *rectAndTexture)
+auto Graphics::destroyRectAndTexture(RectAndTexture *rectAndTexture) -> void
 {
     delete rectAndTexture->rect;
-    SDL_DestroyTexture(rectAndTexture->texture);
+//    SDL_DestroyTexture(rectAndTexture->texture); //already freed at destroyAllTextures()
     delete rectAndTexture;
 }
 
 
-void Graphics::renderText(std::string textureText, SDL_Color textColor, int x, int y)
+auto Graphics::renderText(const std::string& textureText, SDL_Color textColor, int x, int y) -> void
 {
     SDL_Surface* textSurface = TTF_RenderText_Solid(_globalFont.get(), textureText.c_str(), textColor);
     SDL_Texture* textTexture = nullptr;
-    if ( textSurface == NULL )
+    if ( textSurface == nullptr )
     {
-        printf( "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError() );
+        std::cout << "Unable to render text surface! SDL_ttf Error: %s\n", TTF_GetError();
     }
     else
     {
         //Create texture from surface pixels
         textTexture = SDL_CreateTextureFromSurface(_renderer.get(), textSurface );
-        if ( textTexture == NULL )
+        if ( textTexture == nullptr )
         {
-            printf( "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError() );
+            std::cout << "Unable to create texture from rendered text! SDL Error: %s\n", SDL_GetError();
         }
         else
         {
@@ -253,30 +253,30 @@ void Graphics::renderText(std::string textureText, SDL_Color textColor, int x, i
     }
 }
 
-TTF_Font *Graphics::getFontFromFile(const char *file, int ptsize)
+auto Graphics::getFontFromFile(const char *file, int ptsize) -> TTF_Font *
 {
     TTF_Font *gFont = TTF_OpenFont(file, ptsize);
 
-    if (gFont == NULL)
+    if (gFont == nullptr)
     {
-        printf("Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError());
+        std::cout << "Failed to load lazy font! SDL_ttf Error: %s\n", TTF_GetError();
     }
 
     return gFont;
 }
 
 
-TTF_Font *Graphics::createRegularFont()
+auto Graphics::createRegularFont() -> TTF_Font *
 {
-    return getFontFromFile(FONT_PATH, 20);
+    return getFontFromFile(FONT_PATH, FONT_SIZE);
 }
 
-void Graphics::quitSdl()
+auto Graphics::quitSdl() -> void
 {
     // these must be here or else they will get called after SDL_Quit()
     _globalFont.reset();
-    _baseTile.reset();
     _textures.reset();
+    _baseTile.reset();
     _renderer.reset();
     _window.reset();
     TTF_Quit();
@@ -286,6 +286,6 @@ void Graphics::quitSdl()
 
 Graphics::~Graphics()
 {
-    printf("Graphics destructor\n");
+    std::cout << "Graphics destructor\n";
     quitSdl();
 }

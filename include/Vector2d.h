@@ -22,48 +22,48 @@ public:
 
     /*The following operators simply return Vector2ds that
       have operations performed on the relative (x, y) values*/
-    Vector2d operator+(const Vector2d&) const;
-    Vector2d operator-(const Vector2d&) const;
-    Vector2d operator*(const Vector2d&) const;
-    Vector2d operator/(const Vector2d&) const;
+    auto operator+(const Vector2d&) const -> Vector2d;
+    auto operator-(const Vector2d&) const -> Vector2d;
+    auto operator*(const Vector2d&) const -> Vector2d;
+    auto operator/(const Vector2d&) const -> Vector2d;
 
     //Check if the Vectors have the same values.
-    bool operator==(const Vector2d&) const;
+    auto operator==(const Vector2d&) const -> bool;
 
     /*Check which Vectors are closer or further from the
       origin.*/
-    bool operator>(const Vector2d&) const;
-    bool operator<(const Vector2d&) const;
-    bool operator>=(const Vector2d&) const;
-    bool operator<=(const Vector2d&) const;
+    auto operator>(const Vector2d&) const -> bool;
+    auto operator<(const Vector2d&) const -> bool;
+    auto operator>=(const Vector2d&) const -> bool;
+    auto operator<=(const Vector2d&) const -> bool;
 
     //Negate both the x and y values.
-    Vector2d operator-() const;
+    auto operator-() const  -> Vector2d;
 
     //Apply scalar operations.
-    Vector2d operator*(const T&) const;
-    Vector2d operator/(const T&) const;
+    auto operator*(const T&) const  -> Vector2d;
+    auto operator/(const T&) const  -> Vector2d;
 
     //Product functions
-    static T dotProduct(const Vector2d&, const Vector2d&);
-    static T crossProduct(const Vector2d&, const Vector2d&);
+    static auto dotProduct(const Vector2d&, const Vector2d&) -> T;
+    static auto crossProduct(const Vector2d&, const Vector2d&) -> T;
 
     //Returns the length of the vector from the origin.
-    static T magnitude(const Vector2d&);
+    static auto magnitude(const Vector2d&) -> T;
 
-    static T distance(const Vector2d&, const Vector2d&);
+    static auto distance(const Vector2d&, const Vector2d&) -> T;
 
     //Return the unit vector of the input
-    static Vector2d normal(const Vector2d&);
+    static auto normal(const Vector2d&) -> Vector2d;
 
     //Return a vector perpendicular to the left.
-    static Vector2d perpendicular(const Vector2d&);
+    static auto perpendicular(const Vector2d&) -> Vector2d;
 
     //Return true if two line segments intersect.
-    static bool intersect(const Vector2d&, const Vector2d&, const Vector2d&, const Vector2d&);
+    static auto intersect(const Vector2d&, const Vector2d&, const Vector2d&, const Vector2d&) -> bool;
 
     //Return the point where two lines intersect.
-    static Vector2d getIntersect(const Vector2d&, const Vector2d&, const Vector2d&, const Vector2d&);
+    static auto getIntersect(const Vector2d&, const Vector2d&, const Vector2d&, const Vector2d&) -> Vector2d;
 };
 
 #endif

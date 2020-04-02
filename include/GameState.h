@@ -6,15 +6,15 @@
 class GameState
 {
 private:
-	SDL_Point _camera;
+	Vector2d<float> _camera;
 	GameObject* _player;
 	std::vector<GameObject> _gameObjects;
 public:
 	GameState();
-	SDL_Point getCamera();
-	void setCamera(SDL_Point camera);
-	GameObject* getPlayer();
-	std::vector<GameObject> getGameObjects();
+    auto getCamera() -> Vector2d<float>;
+    auto setCamera(Vector2d<float> camera) -> void;
+    auto getPlayer() -> GameObject*;
+    auto getGameObjects() -> std::vector<GameObject> ;
 	~GameState();
 };
 

@@ -3,6 +3,8 @@
 
 #include "Common.h"
 
+#define FONT_SIZE 20
+
 class Graphics
 {
 private:
@@ -15,32 +17,32 @@ private:
     std::unique_ptr<RectAndTexture, std::function<void(RectAndTexture *)>> _baseTile;
     std::unique_ptr<TTF_Font, std::function<void(TTF_Font *)>> _globalFont;
 
-    static void destroyAllTextures (std::map<TileType, SDL_Texture*> *texturesMap);
-    static void destroyRectAndTexture (RectAndTexture *rectAndTexture);
-    static void destroyFont(TTF_Font * font);
-    static const char* getImagePathStringByTileType(TileType tileType); 
-    bool initializeSdl() const;
-    SDL_Window *createWindow() ;
-    SDL_Renderer *createRenderer() ;
-    std::map<TileType, SDL_Texture*> *loadAllTextures();
-    RectAndTexture *createRectFromTexture(SDL_Texture *texture);
-    SDL_Texture *loadTexture(const char *imagePath);
-    void renderTexture(RectAndTexture *rectAndTexture);
-    void renderGameObjects(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap);
-    void renderGridBackground();
-    RectAndTexture *createBaseRect();
-    TTF_Font * getFontFromFile(const char *file, int ptsize);
-    TTF_Font * createRegularFont();
-    void quitSdl();
+    static auto destroyAllTextures (std::map<TileType, SDL_Texture*> *texturesMap) -> void;
+    static auto destroyRectAndTexture (RectAndTexture *rectAndTexture) -> void;
+    static auto destroyFont(TTF_Font * font) -> void;
+    static auto getImagePathStringByTileType(TileType tileType) -> const char*;
+    static auto initializeSdl() -> bool;
+    auto createWindow() -> SDL_Window*;
+    auto createRenderer() -> SDL_Renderer*;
+    auto loadAllTextures() -> std::map<TileType, SDL_Texture*>*;
+    static auto createRectFromTexture(SDL_Texture *texture) -> RectAndTexture*;
+    auto loadTexture(const char *imagePath) -> SDL_Texture*;
+    auto renderTexture(RectAndTexture *rectAndTexture) -> void;
+    auto renderGameObjects(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void;
+    auto renderGridBackground() -> void;
+    auto createBaseRect() -> RectAndTexture*;
+    static auto getFontFromFile(const char *file, int ptsize) -> TTF_Font*;
+    static auto createRegularFont() -> TTF_Font*;
+    auto quitSdl() -> void;
 
 public:
-    Graphics(unsigned short int windowWidth = 800, unsigned short int windowHeight = 600, Uint32 flags = 0);
-    int getWindowWidth() const { return _windowWidth; }
-    int getWindowHeight() const { return _windowHeight; }
-    void renderGrid(std::map<TileType, std::vector<SDL_Point>> gameObjectsPositionsMap);
-    void renderText(std::string textureText, SDL_Color textColor, int x, int y);
-    void clearRender();
-    void presentRender();
+    Graphics(Uint32 windowWidth = 800, Uint32 windowHeight = 600, Uint32 flags = 0);
+    auto getWindowWidth() const { return _windowWidth; }
+    auto getWindowHeight() const { return _windowHeight; }
+    auto renderGrid(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void;
+    auto renderText(const std::string& textureText, SDL_Color textColor, int x, int y) -> void;
+    auto clearRender() -> void;
+    auto presentRender() -> void;
     ~Graphics();
 };
 

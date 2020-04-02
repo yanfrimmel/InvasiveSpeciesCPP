@@ -2,17 +2,19 @@
 #define FPSCOUNTER_H
 
 #include <SDL2/SDL.h>
+#include <numeric>
 
 // How many frames time values to keep
 // The higher the value the smoother the result is...
 // Don't make it 0 or less :)
 #define FRAME_VALUES 100
+#define MILLISECOND_IN_SECOND 1000.F
 
 class FPSCounter
 {
 private:
 	// An array to store frame times:
-	Uint32 _frameTimes[FRAME_VALUES];
+    Uint32 _frameTimes[FRAME_VALUES] = {}; // all elements 0 in C++;
 
 	// Last calculated SDL_GetTicks
 	Uint32 _frameTimeLast;
@@ -25,10 +27,10 @@ private:
 
 public:
 	// This function gets called once on startup.
-	void fpsInit();
-	void fpsThink();
-	float getAverageFramesPerSecond();
-	float getLastFramesPerSecond();
+    auto fpsInit() -> void;
+    auto fpsThink() -> void;
+    auto getAverageFramesPerSecond() -> float;
+    auto getLastFramesPerSecond() -> float;
 };
 
 #endif

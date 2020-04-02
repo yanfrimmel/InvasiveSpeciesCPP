@@ -3,33 +3,33 @@
 GameState::GameState()
 {
 	_camera = {0,0};
-	_gameObjects.push_back(GameObject(32, 100 ,{400, 400}, HUMAN_MALE));
+    _gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 100 ,{400, 400}, HUMAN_MALE));
 	_player = &_gameObjects[0];
 }
 
-SDL_Point GameState::getCamera()
+auto GameState::getCamera() -> Vector2d<float>
 {
 	return _camera;
 }
 
-void GameState::setCamera(SDL_Point camera)
+auto GameState::setCamera(Vector2d<float> camera) -> void
 {
 	_camera = camera;
 }
 
-GameObject* GameState::getPlayer()
+auto GameState::getPlayer() -> GameObject*
 {
 	return _player;
 }
 
-std::vector<GameObject> GameState::getGameObjects()
+auto GameState::getGameObjects() -> std::vector<GameObject>
 {
 	return _gameObjects;
 }
 
 GameState::~GameState()
 {
-	printf("GameState destructor\n");
+    std::cout << "GameState destructor\n";
 	_player = nullptr;
 	_gameObjects.clear();
 	_gameObjects.shrink_to_fit();

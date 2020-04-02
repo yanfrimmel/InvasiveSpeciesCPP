@@ -1,15 +1,14 @@
 #include "FPSCounter.h"
 
-void FPSCounter::fpsInit() {
-
-        // Set all frame times to 0ms.
-        memset(_frameTimes, 0, sizeof(_frameTimes));
+auto FPSCounter::fpsInit() -> void
+{
         _frameCount = 0;
         _framesPerSecond = 0;
         _frameTimeLast = SDL_GetTicks();
 }
 
-void FPSCounter::fpsThink() {
+auto FPSCounter::fpsThink() -> void
+{
 
         Uint32 frametimesindex;
         Uint32 getticks;
@@ -22,10 +21,8 @@ void FPSCounter::fpsThink() {
         // printf("_frameCount:  %d\n", _frameCount);
         // store the current time
         getticks = SDL_GetTicks();
-
         // save the frame time value
         _frameTimes[frametimesindex] = getticks - _frameTimeLast;
-
         // save the last frame time for the next fpsthink
         _frameTimeLast = getticks;
 
@@ -51,23 +48,21 @@ void FPSCounter::fpsThink() {
         // add up all the values and divide to get the average frame time.
         _framesPerSecond = 0;
         for (i = 0; i < count; i++) {
-
                 _framesPerSecond += _frameTimes[i];
-
         }
 
         _framesPerSecond /= count;
 
         // now to make it an actual frames per second value...
-        _framesPerSecond = 1000.f / _framesPerSecond;
+        _framesPerSecond = MILLISECOND_IN_SECOND / _framesPerSecond;
 }
 
-float FPSCounter::getAverageFramesPerSecond()
+auto FPSCounter::getAverageFramesPerSecond() -> float
 {
 	return _framesPerSecond;
 }
 
-float FPSCounter::getLastFramesPerSecond()
+auto FPSCounter::getLastFramesPerSecond() -> float
 {
-	return 1000.f / _frameTimes[_frameCount % FRAME_VALUES];
+    return MILLISECOND_IN_SECOND / _frameTimes[_frameCount % FRAME_VALUES];
 }

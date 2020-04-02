@@ -5,21 +5,21 @@ Game::Game(Configurations configurations)
     start(configurations);
 }
 
-void Game::start(Configurations configurations)
+auto Game::start(Configurations configurations) -> void
 {
-    _graphics.reset(new Graphics(
+    _graphics = std::make_unique<Graphics>(
                         configurations.windowWidth,
                         configurations.windowHeight,
-                        configurations.flags));
-    _gameState.reset(new GameState()); //TODO: initail game state
-    _mouseInput.reset(new MouseInput { -1, -1, 0});
-    _fpsCounter.reset(new FPSCounter());
+                        configurations.flags);
+    _gameState = std::make_unique<GameState>(); //TODO: initail game state
+    _mouseInput = std::make_unique<MouseInput>(MouseInput { -1, -1, 0});
+    _fpsCounter = std::make_unique<FPSCounter>();
     _fpsCounter->fpsInit();
 
-    gameLoop(configurations.fpsCap, 1000.0f / configurations.fpsCap);
+    gameLoop(configurations.fpsCap, MILLISECOND_IN_SECOND / configurations.fpsCap);
 }
 
-std::map<TileType, std::vector<SDL_Point>> Game::convertStateToGraphicsMap()
+auto Game::convertStateToGraphicsMap() -> std::map<TileType, std::vector<SDL_Point>>
 {
     return [this]() -> std::map<TileType, std::vector<SDL_Point>>
     {
@@ -29,7 +29,7 @@ std::map<TileType, std::vector<SDL_Point>> Game::convertStateToGraphicsMap()
     }();
 }
 
-bool Game::checkForSDLQuitEvents()
+auto Game::checkForSDLQuitEvents() -> bool
 {
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -37,16 +37,16 @@ bool Game::checkForSDLQuitEvents()
         switch (event.type)
         {
         case SDL_QUIT:
-            printf("closeRequested! quiting\n");
+            std::cout << "closeRequested! quiting\n";
             return true;
         }
     }
     return false;
 }
 
-void Game::handleMouseState(float fps)
+auto Game::handleMouseState(float fps) -> void
 {
-    _mouseInput.get()->mouseState = SDL_GetMouseState(&_mouseInput.get()->mouseX, &_mouseInput.get()->mouseY);
+    _mouseInput->mouseState = SDL_GetMouseState(&_mouseInput->mouseX, &_mouseInput->mouseY);
     if (_mouseInput->mouseState & SDL_BUTTON(SDL_BUTTON_LEFT))
     {
         // printf("SDL_MOUSEBUTTONDOWN\n");
@@ -55,7 +55,7 @@ void Game::handleMouseState(float fps)
     }
 }
 
-void Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay)
+auto Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay) -> void
 {
     while (true)
     {
@@ -79,5 +79,5 @@ void Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay)
 
 Game::~Game()
 {
-    printf("Game destructor\n");
+    std::cout << "Game destructor\n";
 }

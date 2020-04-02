@@ -12,11 +12,16 @@
 #include <functional>
 #include <vector>
 #include <map>
+#include <stdexcept>
+#include <string>
+#include <iostream>
+#include <utility>
+#include <queue>
 
 struct Configurations
 {
-	unsigned short int windowWidth;
-	unsigned short int windowHeight;
+    Uint32 windowWidth;
+    Uint32 windowHeight;
 	Uint32 flags;
 	Uint32 fpsCap;
 };

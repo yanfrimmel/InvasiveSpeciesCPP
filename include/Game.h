@@ -13,11 +13,11 @@ private:
 	std::unique_ptr<MouseInput> _mouseInput;
 	std::unique_ptr<FPSCounter> _fpsCounter;
 
-	void start(Configurations configurations);
-	void gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0);
-	void handleMouseState(float fps);
-	bool checkForSDLQuitEvents();
-	std::map<TileType, std::vector<SDL_Point>> convertStateToGraphicsMap();
+    auto start(Configurations configurations) -> void;
+    auto gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0) -> void;
+    auto handleMouseState(float fps) -> void;
+    auto static checkForSDLQuitEvents() -> bool;
+    auto convertStateToGraphicsMap() -> std::map<TileType, std::vector<SDL_Point>>;
 
 public:
 	Game(Configurations configurations);

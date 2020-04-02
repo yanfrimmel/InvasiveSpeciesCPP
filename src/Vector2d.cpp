@@ -5,100 +5,100 @@ template<class T> Vector2d<T>::Vector2d(): x(0), y(0) {}
 
 template<class T> Vector2d<T>::Vector2d(T sourceX, T sourceY) : x(sourceX), y(sourceY) {}
 
-template<class T> Vector2d<T> Vector2d<T>::operator+(const Vector2d &v) const
+template<class T> auto Vector2d<T>::operator+(const Vector2d &v) const -> Vector2d<T>
 {
     return Vector2d(x+v.x, y+v.y);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator-(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator-(const Vector2d<T> &v) const -> Vector2d<T>
 {
     return Vector2d(x-v.x, y-v.y);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator*(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator*(const Vector2d<T> &v) const -> Vector2d<T>
 {
     return Vector2d(x*v.x, y*v.y);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator/(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator/(const Vector2d<T> &v) const -> Vector2d<T>
 {
     return Vector2d<T>(x/v.x, y/v.y);
 }
 
-template<class T> bool Vector2d<T>::operator==(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator==(const Vector2d<T> &v) const -> bool
 {
     return ((x == v.x) && (y == v.y));
 }
 
-template<class T> bool Vector2d<T>::operator>(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator>(const Vector2d<T> &v) const -> bool
 {
     return (x*x + y*y) > (v.x*v.x + v.y*v.y);
 }
 
-template<class T> bool Vector2d<T>::operator<(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator<(const Vector2d<T> &v) const -> bool
 {
     return (x*x + y*y) < (v.x*v.x + v.y*v.y);
 }
 
-template<class T> bool Vector2d<T>::operator>=(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator>=(const Vector2d<T> &v) const -> bool
 {
     return (x*x + y*y) > (v.x*v.x + v.y*v.y) ||
            (x*x + y*y) == (v.x*v.x + v.y*v.y);
 }
 
-template<class T> bool Vector2d<T>::operator<=(const Vector2d<T> &v) const
+template<class T> auto Vector2d<T>::operator<=(const Vector2d<T> &v) const -> bool
 {
     return (x*x + y*y) < (v.x*v.x + v.y*v.y) ||
            (x*x + y*y) == (v.x*v.x + v.y*v.y);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator-() const
+template<class T> auto Vector2d<T>::operator-() const -> Vector2d<T>
 {
     return Vector2d(-x, -y);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator*(const T& scalar) const
+template<class T> auto Vector2d<T>::operator*(const T& scalar) const -> Vector2d<T>
 {
     return Vector2d(x*scalar, y*scalar);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::operator/(const T& scalar) const
+template<class T> auto Vector2d<T>::operator/(const T& scalar) const -> Vector2d<T>
 {
     return Vector2d(x/scalar, y/scalar);
 }
 
-template<class T> T Vector2d<T>::dotProduct(const Vector2d<T> &a, const Vector2d<T> &b)
+template<class T> auto Vector2d<T>::dotProduct(const Vector2d<T> &a, const Vector2d<T> &b) -> T
 {
     return ((a.x * b.x) + (a.y * b.y));
 }
 
-template<class T> T Vector2d<T>::crossProduct(const Vector2d<T> &a, const Vector2d &b)
+template<class T> auto Vector2d<T>::crossProduct(const Vector2d<T> &a, const Vector2d &b) -> T
 {
     return ((a.x * b.y) - (a.y * b.x));
 }
 
-template<class T> T Vector2d<T>::magnitude(const Vector2d<T> &v)
+template<class T> auto Vector2d<T>::magnitude(const Vector2d<T> &v) -> T
 {
-    return sqrt((v.x * v.x) + (v.y * v.y));
+    return std::sqrt((v.x * v.x) + (v.y * v.y));
 }
 
-template<class T> T Vector2d<T>::distance(const Vector2d& v1, const Vector2d& v2)
+template<class T> auto Vector2d<T>::distance(const Vector2d& v1, const Vector2d& v2) -> T
 {
     return magnitude(v1 - v2);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::normal(const Vector2d &v)
+template<class T> auto Vector2d<T>::normal(const Vector2d &v) -> Vector2d<T>
 {
     T m = magnitude(v);
     return Vector2d<T>(v.x / m, v.y / m);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::perpendicular(const Vector2d<T> &v)
+template<class T> auto Vector2d<T>::perpendicular(const Vector2d<T> &v) -> Vector2d<T>
 {
     return Vector2d<T>(v.y, -v.x);
 }
 
-template<class T> bool Vector2d<T>::intersect(const Vector2d<T> &aa, const Vector2d<T> &ab, const Vector2d<T> &ba, const Vector2d<T> &bb)
+template<class T> auto Vector2d<T>::intersect(const Vector2d<T> &aa, const Vector2d<T> &ab, const Vector2d<T> &ba, const Vector2d<T> &bb) -> bool
 {
     Vector2d<T> p = aa;
     Vector2d<T> r = ab - aa;
@@ -112,7 +112,7 @@ template<class T> bool Vector2d<T>::intersect(const Vector2d<T> &aa, const Vecto
            (0.0 <= u && u <= 1.0);
 }
 
-template<class T> Vector2d<T> Vector2d<T>::getIntersect(const Vector2d<T> &aa, const Vector2d<T> &ab, const Vector2d<T> &ba, const Vector2d<T> &bb)
+template<class T> auto Vector2d<T>::getIntersect(const Vector2d<T> &aa, const Vector2d<T> &ab, const Vector2d<T> &ba, const Vector2d<T> &bb) -> Vector2d<T>
 {
     T pX = (aa.x*ab.y - aa.y*ab.x)*(ba.x - bb.x) -
                (ba.x*bb.y - ba.y*bb.x)*(aa.x - ab.x);

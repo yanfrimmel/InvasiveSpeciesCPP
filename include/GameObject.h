@@ -4,6 +4,8 @@
 #include "Common.h"
 #include "Vector2d.h"
 
+#define DEFAULT_OBJECT_SIZE 32
+
 class GameObject
 {
 private:
@@ -16,10 +18,10 @@ private:
 
 public:
 	GameObject(Uint32 size, Uint32 speed, SDL_Point position, TileType tileType);
-	void setPosition(SDL_Point position);
-	SDL_Point getPosition();
-	TileType getTileType();
-	void onDestinationSelected(SDL_Point point, float fps);
+    auto setPosition(SDL_Point position) -> void;
+    auto getPosition() -> SDL_Point;
+    auto getTileType() -> TileType;
+    auto onDestinationSelected(SDL_Point point, float fps) -> void;
 	~GameObject();
 };
 
