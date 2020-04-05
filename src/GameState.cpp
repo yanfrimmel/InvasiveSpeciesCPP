@@ -1,10 +1,11 @@
 #include "GameState.h"
 
-GameState::GameState()
+GameState::GameState(unsigned short int windowWidth,  unsigned short int windowHeight)
 {
 	_camera = {0,0};
-    _gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 100 ,{400, 400}, HUMAN_MALE));
-	_player = &_gameObjects[0];
+     _gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 0 ,{(float)windowWidth/2 - 100, (float)windowHeight/2}, HUMAN_FEMALE));
+     _gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 100 ,{(float)windowWidth/2, (float)windowHeight/2}, HUMAN_MALE));
+    _player = &_gameObjects[1];
 }
 
 auto GameState::getCamera() -> Vector2d<float>

@@ -12,15 +12,19 @@ private:
 	std::unique_ptr<GameState> _gameState;
 	std::unique_ptr<MouseInput> _mouseInput;
 	std::unique_ptr<FPSCounter> _fpsCounter;
+    unsigned short int _worldWidth;
+    unsigned short int _worldHeight;
+    unsigned short int _fpsCap;
 
-    auto start(Configurations configurations) -> void;
-    auto gameLoop(Uint32 fpsCap = 60, float minFrameRateDelay = 1.0) -> void;
+    auto gameLoop(float fpsCap = 60.F) -> void;
     auto handleMouseState(float fps) -> void;
     auto static checkForSDLQuitEvents() -> bool;
-    auto convertStateToGraphicsMap() -> std::map<TileType, std::vector<SDL_Point>>;
+    auto convertStateToGraphicsMap() -> std::vector<std::pair<TileType, SDL_Point>>;
+    auto validatePlayerPosition() -> void;
 
 public:
-	Game(Configurations configurations);
+    Game(Configurations configurations);
+    auto start() -> void;
 	~Game();
 };
 

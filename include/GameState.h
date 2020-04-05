@@ -10,7 +10,7 @@ private:
 	GameObject* _player;
 	std::vector<GameObject> _gameObjects;
 public:
-	GameState();
+    GameState(unsigned short int windowWidth,  unsigned short int windowHeight);
     auto getCamera() -> Vector2d<float>;
     auto setCamera(Vector2d<float> camera) -> void;
     auto getPlayer() -> GameObject*;

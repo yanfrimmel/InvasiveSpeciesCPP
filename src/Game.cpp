@@ -2,40 +2,52 @@
 
 Game::Game(Configurations configurations)
 {
-    start(configurations);
-}
-
-auto Game::start(Configurations configurations) -> void
-{
-    _graphics = std::make_unique<Graphics>(
-                        configurations.windowWidth,
-                        configurations.windowHeight,
-                        configurations.flags);
-    _gameState = std::make_unique<GameState>(); //TODO: initail game state
-    _mouseInput = std::make_unique<MouseInput>(MouseInput { -1, -1, 0});
+    _graphics = std::make_unique<Graphics>(configurations.windowWidth, configurations.windowHeight, configurations.flags);
+    _gameState = std::make_unique<GameState>(configurations.windowWidth, configurations.windowHeight);
+    _mouseInput = std::make_unique<MouseInput>(MouseInput{ -1, -1, 0});
     _fpsCounter = std::make_unique<FPSCounter>();
-    _fpsCounter->fpsInit();
-
-    gameLoop(configurations.fpsCap, MILLISECOND_IN_SECOND / configurations.fpsCap);
+    _worldWidth = configurations.worldWidth;
+    _worldHeight = configurations.worldHeight;
+    _fpsCap = configurations.fpsCap;
 }
 
-auto Game::convertStateToGraphicsMap() -> std::map<TileType, std::vector<SDL_Point>>
+auto Game::start() -> void
 {
-    return [this]() -> std::map<TileType, std::vector<SDL_Point>>
+    _fpsCounter->fpsInit();
+    gameLoop(_fpsCap);
+}
+
+auto Game::convertStateToGraphicsMap() -> std::vector<std::pair<TileType, SDL_Point>>
+{
+    std::vector<std::pair<TileType, SDL_Point>> convertedVector;
+
+    for (auto o : _gameState->getGameObjects())
     {
-        return std::map<TileType, std::vector<SDL_Point>>{
-            {   _gameState->getPlayer()->getTileType(), {_gameState->getPlayer()->getPosition()}}
-        };
-    }();
+        convertedVector.push_back(std::make_pair(o.getTileType(), SDL_Point{(int)o.getPosition().x, (int)o.getPosition().y}));
+    }
+
+    std::remove_if(convertedVector.begin(),
+         convertedVector.end(),
+         [this](std::pair<TileType, SDL_Point> o) {
+         return o.second.x - (int)_gameState->getCamera().x < 0 ||
+                 o.second.y - (int)_gameState->getCamera().y < 0 ||
+                 o.second.x - (int)_gameState->getCamera().x > _graphics->getWindowWidth() ||
+                 o.second.y - (int)_gameState->getCamera().y > _graphics->getWindowHeight();
+    });
+
+    for (auto& o : convertedVector)
+    {
+        o.second.x -= _gameState->getCamera().x;
+        o.second.y -= _gameState->getCamera().y;
+    }
+    return convertedVector;
 }
 
 auto Game::checkForSDLQuitEvents() -> bool
 {
     SDL_Event event;
-    while (SDL_PollEvent(&event))
-    {
-        switch (event.type)
-        {
+    while (SDL_PollEvent(&event)) {
+        switch (event.type) {
         case SDL_QUIT:
             std::cout << "closeRequested! quiting\n";
             return true;
@@ -44,23 +56,46 @@ auto Game::checkForSDLQuitEvents() -> bool
     return false;
 }
 
-auto Game::handleMouseState(float fps) -> void
+auto Game::validatePlayerPosition() -> void
 {
-    _mouseInput->mouseState = SDL_GetMouseState(&_mouseInput->mouseX, &_mouseInput->mouseY);
-    if (_mouseInput->mouseState & SDL_BUTTON(SDL_BUTTON_LEFT))
-    {
-        // printf("SDL_MOUSEBUTTONDOWN\n");
-        _gameState->getPlayer()->onDestinationSelected(SDL_Point {_mouseInput ->mouseX, _mouseInput->mouseY}, fps);
-        //TODO: on mouse click
+    if(_gameState->getPlayer()->getPosition().x < 0) {
+        _gameState->getPlayer()->setPosition({0, _gameState->getPlayer()->getPosition().y});
+    }
+    if(_gameState->getPlayer()->getPosition().y < 0) {
+        _gameState->getPlayer()->setPosition({ _gameState->getPlayer()->getPosition().x, 0});
+    }
+    if(_gameState->getPlayer()->getPosition().x > _worldWidth) {
+        _gameState->getPlayer()->setPosition({ (float)_worldWidth, _gameState->getPlayer()->getPosition().y});
+    }
+    if(_gameState->getPlayer()->getPosition().y > _worldHeight) {
+         _gameState->getPlayer()->setPosition({ _gameState->getPlayer()->getPosition().x, (float)_worldHeight});
     }
 }
 
-auto Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay) -> void
+auto Game::handleMouseState(float fps) -> void
 {
-    while (true)
-    {
+    _mouseInput->mouseState =
+    SDL_GetMouseState(&_mouseInput->mouseX, &_mouseInput->mouseY);
+    if (_mouseInput->mouseState & SDL_BUTTON(SDL_BUTTON_LEFT)) {
+        // printf("SDL_MOUSEBUTTONDOWN\n");
+        auto halfWindowWidth = _graphics->getWindowWidth() / 2;
+        auto halfWindowHeight = _graphics->getWindowHeight() / 2;
+        _gameState->setCamera({_gameState->getPlayer()->getPosition().x - halfWindowWidth,
+                               _gameState->getPlayer()->getPosition().y - halfWindowHeight});
+        _gameState->getPlayer()->onDestinationSelected(
+        {(float)_mouseInput->mouseX + _gameState->getCamera().x, (float)_mouseInput->mouseY + _gameState->getCamera().y}, fps);
+
+        validatePlayerPosition();
+    }
+}
+
+auto Game::gameLoop(float fpsCap) -> void
+{
+    float minFrameRateDelay = MILLISECOND_IN_SECOND / fpsCap;
+    while (true) {
         // process events
-        if(checkForSDLQuitEvents()) return;
+        if (checkForSDLQuitEvents())
+            return;
 
         _graphics->clearRender();
         float averageFPS = _fpsCounter->getAverageFramesPerSecond();
@@ -77,7 +112,4 @@ auto Game::gameLoop(Uint32 fpsCap, float minFrameRateDelay) -> void
     }
 }
 
-Game::~Game()
-{
-    std::cout << "Game destructor\n";
-}
+Game::~Game() { std::cout << "Game destructor\n"; }

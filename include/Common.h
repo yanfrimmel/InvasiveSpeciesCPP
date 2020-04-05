@@ -17,6 +17,8 @@
 #include <iostream>
 #include <utility>
 #include <queue>
+#include <algorithm>
+#include <utility>
 
 struct Configurations
 {
@@ -24,6 +26,8 @@ struct Configurations
     Uint32 windowHeight;
 	Uint32 flags;
 	Uint32 fpsCap;
+    Uint32 worldWidth;
+    Uint32 worldHeight;
 };
 
 struct RectAndTexture

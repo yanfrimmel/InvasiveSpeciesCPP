@@ -117,24 +117,20 @@ auto Graphics::presentRender() -> void
     SDL_RenderPresent(_renderer.get());
 }
 
-auto Graphics::renderGrid(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void
+auto Graphics::renderGrid(const std::vector<std::pair<TileType, SDL_Point>>& gameObjectsPositionsMap) -> void
 {
-    // printf("renderGrid\n");
     renderGridBackground();
     renderGameObjects(gameObjectsPositionsMap);
 }
 
-auto Graphics::renderGameObjects(const std::map<TileType, std::vector<SDL_Point>>& gameObjectsPositionsMap) -> void
+auto Graphics::renderGameObjects(const std::vector<std::pair<TileType, SDL_Point>>& gameObjectsPositionsMap) -> void
 {
     for (const auto& current : gameObjectsPositionsMap)
     {
         _baseTile->texture = (*_textures)[current.first];
-        for (auto currentPosition : current.second)
-        {
-            _baseTile->rect->x = currentPosition.x;
-            _baseTile->rect->y = currentPosition.y;
-            renderTexture(_baseTile.get());
-        }
+        _baseTile->rect->x = current.second.x;
+        _baseTile->rect->y = current.second.y;
+        renderTexture(_baseTile.get());
     }
 }
 
