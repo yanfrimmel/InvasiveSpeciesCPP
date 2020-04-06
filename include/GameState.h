@@ -3,19 +3,19 @@
 
 #include "GameObject.h"
 
-class GameState
-{
+class GameState {
 private:
-	Vector2d<float> _camera;
-	GameObject* _player;
-	std::vector<GameObject> _gameObjects;
+  Vector2d<float> _camera;
+  GameObject *_player;
+  std::vector<GameObject> _gameObjects;
+
 public:
-    GameState(unsigned short int windowWidth,  unsigned short int windowHeight);
-    auto getCamera() -> Vector2d<float>;
-    auto setCamera(Vector2d<float> camera) -> void;
-    auto getPlayer() -> GameObject*;
-    auto getGameObjects() -> std::vector<GameObject> ;
-	~GameState();
+  GameState(unsigned short int windowWidth, unsigned short int windowHeight);
+  auto getCamera() -> Vector2d<float>;
+  auto setCamera(Vector2d<float> camera) -> void;
+  auto getPlayer() -> GameObject *;
+  auto getGameObjects() -> std::vector<GameObject>;
+  ~GameState();
 };
 
 #endif

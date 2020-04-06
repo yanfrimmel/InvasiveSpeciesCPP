@@ -16,7 +16,7 @@ add_executable(${PROJECT_NAME} apps/Main.cpp ${SOURCES})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES} ${SDL2TTF_LIBRARIES})
 target_compile_options(${PROJECT_NAME} PRIVATE
      $<$<OR:$<CXX_COMPILER_ID:Clang>,$<CXX_COMPILER_ID:AppleClang>,$<CXX_COMPILER_ID:GNU>>:
-          -Wall -ggdb3>
+          -Wall>
      $<$<CXX_COMPILER_ID:MSVC>:
           /W4>)
 
