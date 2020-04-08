@@ -24,15 +24,15 @@ Graphics::Graphics(Uint32 windowWidth, Uint32 windowHeight, Uint32 flags)
 auto Graphics::initializeSdl() -> bool {
   // attempt to initialize graphics and timer system
   if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_TIMER) != 0) {
-    std::cout << "error initializing SDL: %s\n" << SDL_GetError();
+    std::cout << "error initializing SDL: \n" << SDL_GetError();
     return false;
   }
   if (!(IMG_Init(IMG_INIT_PNG) & IMG_INIT_PNG)) {
-    std::cout << "could not initialize sdl2_image: %s\n" << IMG_GetError();
+    std::cout << "could not initialize sdl2_image: \n" << IMG_GetError();
     return false;
   }
   if (TTF_Init() == -1) {
-    std::cout << "SDL_ttf could not initialize! SDL_ttf Error: %s\n"
+    std::cout << "SDL_ttf could not initialize! SDL_ttf Error: \n"
               << TTF_GetError();
     return false;
   }
@@ -44,8 +44,7 @@ auto Graphics::createWindow() -> SDL_Window * {
       "InvasiveSpecies", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
       _windowWidth, _windowHeight, _flags);
   if (!window) {
-    std::cout << "error creating window: %s\n" << SDL_GetError();
-    std::cout << "Could not create a window: %s" << SDL_GetError();
+    std::cout << "error creating window: \n" << SDL_GetError();
     SDL_Quit();
     return nullptr;
   }
@@ -58,8 +57,7 @@ auto Graphics::createRenderer() -> SDL_Renderer * {
 
   SDL_Renderer *renderer = SDL_CreateRenderer(_window.get(), -1, render_flags);
   if (!renderer) {
-    std::cout << "error creating renderer: %s\n" << SDL_GetError();
-    std::cout << "error creating renderer: %s" << SDL_GetError();
+    std::cout << "error creating renderer: \n" << SDL_GetError();
     quitSdl();
     return nullptr;
   }
@@ -71,7 +69,6 @@ auto Graphics::loadTexture(const char *imagePath) -> SDL_Texture * {
   SDL_Texture *texture = IMG_LoadTexture(_renderer.get(), imagePath);
   if (!texture) {
     std::cout << "error creating texture\n";
-    std::cout << "error creating texture: %s";
     quitSdl();
     return nullptr;
   }
@@ -187,15 +184,14 @@ auto Graphics::renderText(const std::string &textureText, SDL_Color textColor,
       TTF_RenderText_Solid(_globalFont.get(), textureText.c_str(), textColor);
   SDL_Texture *textTexture = nullptr;
   if (textSurface == nullptr) {
-    std::cout << "Unable to render text surface! SDL_ttf Error: %s\n",
+    std::cout << "Unable to render text surface! SDL_ttf Error: \n",
         TTF_GetError();
   } else {
     // Create texture from surface pixels
     textTexture = SDL_CreateTextureFromSurface(_renderer.get(), textSurface);
     if (textTexture == nullptr) {
-      std::cout
-          << "Unable to create texture from rendered text! SDL Error: %s\n",
-          SDL_GetError();
+      std::cout << "Unable to create texture from rendered text! SDL Error: \n"
+                << SDL_GetError();
     } else {
       std::unique_ptr<RectAndTexture, std::function<void(RectAndTexture *)>>
           baseTile = std::unique_ptr<RectAndTexture,
@@ -217,8 +213,8 @@ auto Graphics::getFontFromFile(const char *file, int ptsize) -> TTF_Font * {
   TTF_Font *gFont = TTF_OpenFont(file, ptsize);
 
   if (gFont == nullptr) {
-    std::cout << "Failed to load lazy font! SDL_ttf Error: %s\n",
-        TTF_GetError();
+    std::cout << "Failed to load lazy font! SDL_ttf Error: \n"
+              << TTF_GetError();
   }
 
   return gFont;
