@@ -1,8 +1,7 @@
 #ifndef FPSCOUNTER_H /* Include guard */
 #define FPSCOUNTER_H
 
-#include <SDL2/SDL.h>
-#include <numeric>
+#include "Common.h"
 
 // How many frames time values to keep
 // The higher the value the smoother the result is...

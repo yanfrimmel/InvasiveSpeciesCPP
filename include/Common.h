@@ -1,11 +1,20 @@
 #ifndef COMMON_H /* Include guard */
 #define COMMON_H
 
+#ifdef __unix__         
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_error.h>
 #include <SDL2/SDL_image.h>
 #include <SDL2/SDL_timer.h>
 #include <SDL2/SDL_ttf.h>
+#elif defined(_WIN32) || defined(WIN32) 
+#include <SDL.h>
+#include <SDL_error.h>
+#include <SDL_image.h>
+#include <SDL_timer.h>
+#include <SDL_ttf.h>
+#endif
+
 #include <algorithm>
 #include <fstream>
 #include <functional>
