@@ -29,42 +29,57 @@
 #include <utility>
 #include <vector>
 
+template <typename F>
+auto compose(F&& f)
+{
+	return[a = std::move(f)](auto&&... args){
+		return a(std::move(args)...);
+	};
+}
+
 struct Configurations {
-  Uint32 windowWidth;
-  Uint32 windowHeight;
-  Uint32 flags;
-  Uint32 fpsCap;
-  Uint32 worldWidth;
-  Uint32 worldHeight;
+	Uint32 windowWidth;
+	Uint32 windowHeight;
+	Uint32 flags;
+	Uint32 fpsCap;
+	Uint32 worldWidth;
+	Uint32 worldHeight;
 };
 
 struct RectAndTexture {
-  SDL_Rect *rect;
-  SDL_Texture *texture;
+	SDL_Rect *rect;
+	SDL_Texture *texture;
 };
 
 struct MouseInput {
-  int mouseX;
-  int mouseY;
-  Uint32 mouseState;
+	int mouseX;
+	int mouseY;
+	Uint32 mouseState;
 };
 
 enum TileType {
-  SOIL = 0,
-  GRASS = 1,
-  STONES = 2,
-  HUMAN_MALE = 3,
-  HUMAN_FEMALE = 4
+	SOIL = 0,
+	GRASS = 1,
+	STONE = 2,
+	HUMAN_MALE = 3,
+	HUMAN_FEMALE = 4,
+	CHICKEN_MALE = 5,
+	CHICKEN_FEMALE = 6,
+	WATER = 7
 };
 
-static const TileType tileTypeVector[] = {SOIL, GRASS, STONES, HUMAN_MALE,
-                                          HUMAN_FEMALE};
+static const TileType tileTypeVector[] = { SOIL, GRASS, STONE, HUMAN_MALE,
+										  HUMAN_FEMALE, CHICKEN_MALE, CHICKEN_FEMALE, WATER };
 
 #define FONT_PATH ("assets/fonts/ObliviousFont.ttf")
 #define SOIL_IMAGE_PATH ("assets/images/soil.png")
 #define GRASS_IMAGE_PATH ("assets/images/grass.png")
-#define STONES_IMAGE_PATH ("assets/images/stones.png")
+#define STONE_IMAGE_PATH ("assets/images/stone.png")
 #define HUMAN_MALE_IMAGE_PATH ("assets/images/human_male.png")
 #define HUMAN_FEMALE_IMAGE_PATH ("assets/images/human_female.png")
+#define CHICKEN_MALE_IMAGE_PATH ("assets/images/chicken_male.png")
+#define CHICKEN_FEMALE_IMAGE_PATH ("assets/images/chicken_female.png")
+#define WATER_IMAGE_PATH ("assets/images/water.png")
+
 
 #endif
