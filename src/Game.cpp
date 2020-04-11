@@ -18,23 +18,23 @@ auto Game::start() -> void {
 	gameLoop(_fpsCap);
 }
 
-auto Game::convertStateToGraphicsMap() -> std::vector<std::pair<TileType, SDL_Point>> {
-	std::vector<std::pair<TileType, SDL_Point>> convertedVector;
+auto Game::convertStateToGraphicsMap() -> std::vector<std::pair<TileType, SDL_Rect>> {
+	std::vector<std::pair<TileType, SDL_Rect>> convertedVector;
 
 	for (auto o : _gameState->getGameObjects()) {
 		convertedVector.push_back(
-			std::make_pair(o.getTileType(), SDL_Point{ (int)o.getPosition().x,
-													  (int)o.getPosition().y }));
+			std::make_pair(o.getTileType(), SDL_Rect{ (int)o.getPosition().x,
+													  (int)o.getPosition().y,
+													  (int)o.getSize(),
+													  (int)o.getSize() }));
 	}
 
 	auto end = std::remove_if(convertedVector.begin(), convertedVector.end(),
-		[this](std::pair<TileType, SDL_Point> o) {
-		return o.second.x - (int)_gameState->getCamera().x < 0 ||
-			o.second.y - (int)_gameState->getCamera().y < 0 ||
-			o.second.x - (Uint32)_gameState->getCamera().x >
-			_graphics->getWindowWidth() ||
-			o.second.y - (Uint32)_gameState->getCamera().y >
-			_graphics->getWindowHeight();
+		[this](std::pair<TileType, SDL_Rect> o) {
+		return o.second.x - _gameState->getCamera().x < - o.second.w || // left
+			o.second.y - _gameState->getCamera().y < - o.second.h || // right
+			o.second.x - _gameState->getCamera().x >(int)_graphics->getWindowWidth() || // right
+			o.second.y - _gameState->getCamera().y >(int)_graphics->getWindowHeight(); // down
 	});
 
 	convertedVector.erase(end, convertedVector.end());
@@ -103,8 +103,7 @@ auto Game::gameLoop(Uint32 fpsCap) -> void {
 		float averageFPS = _fpsCounter->getAverageFramesPerSecond();
 		handleMouseState(averageFPS);
 		_graphics->renderGrid(convertStateToGraphicsMap());
-		_graphics->renderText("FPS: " + std::to_string(averageFPS),
-		{ 255, 255, 0, 255 }, 0, 0);
+		_graphics->renderText("FPS: " + std::to_string((int)averageFPS), { 255, 255, 0, 255 }, 0, 0);
 		_graphics->presentRender();
 
 		if (fpsCap < averageFPS) {
@@ -143,4 +142,4 @@ auto Game::loadMap(const char *filename) -> void {
 	in.close();
 }
 
-Game::~Game() { std::cout << "Game destructor\n"; }
+Game::~Game() { std::cout << "Game destructor" << std::endl; }

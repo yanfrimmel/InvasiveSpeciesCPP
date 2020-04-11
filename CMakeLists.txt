@@ -18,7 +18,7 @@ if (WIN32)
      file(COPY "${PROJECT_SOURCE_DIR}/lib/" DESTINATION "Debug/")
 endif()
 
- file(COPY "${PROJECT_SOURCE_DIR}/assets/" DESTINATION "assets/")
+file(COPY "${PROJECT_SOURCE_DIR}/assets/" DESTINATION "assets/")
 
 file(GLOB SOURCES "${PROJECT_SOURCE_DIR}/src/*.cpp")
 file(GLOB HEADERS "${PROJECT_SOURCE_DIR}/include/*.h")

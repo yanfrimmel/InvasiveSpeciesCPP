@@ -92,19 +92,21 @@ auto Graphics::clearRender() -> void { SDL_RenderClear(_renderer.get()); }
 auto Graphics::presentRender() -> void { SDL_RenderPresent(_renderer.get()); }
 
 auto Graphics::renderGrid(
-	const std::vector<std::pair<TileType, SDL_Point>> &gameObjectsPositionsMap)
+	const std::vector<std::pair<TileType, SDL_Rect>> &gameObjectsPositionsMap)
 	-> void {
 	renderGridBackground();
 	renderGameObjects(gameObjectsPositionsMap);
 }
 
 auto Graphics::renderGameObjects(
-	const std::vector<std::pair<TileType, SDL_Point>> &gameObjectsPositionsMap)
+	const std::vector<std::pair<TileType, SDL_Rect>> &gameObjectsPositionsMap)
 	-> void {
 	for (const auto &current : gameObjectsPositionsMap) {
 		_baseTile->texture = (*_textures)[current.first];
 		_baseTile->rect->x = current.second.x;
 		_baseTile->rect->y = current.second.y;
+		_baseTile->rect->w = current.second.w;
+		_baseTile->rect->h = current.second.h;
 		renderTexture(_baseTile.get());
 	}
 }
@@ -124,6 +126,7 @@ auto Graphics::renderGridBackground() -> void {
 }
 
 auto Graphics::renderTexture(RectAndTexture *rectAndTexture) -> void {
+	SDL_QueryTexture(rectAndTexture->texture, nullptr, nullptr, &rectAndTexture->rect->w, &rectAndTexture->rect->h);
 	SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, nullptr,
 		rectAndTexture->rect);
 }

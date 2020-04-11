@@ -31,7 +31,7 @@ private:
 	static auto createRectFromTexture(SDL_Texture *texture)->RectAndTexture *;
 	auto loadTexture(const char *imagePath)->SDL_Texture *;
 	auto renderTexture(RectAndTexture *rectAndTexture) -> void;
-	auto renderGameObjects(const std::vector<std::pair<TileType, SDL_Point>>
+	auto renderGameObjects(const std::vector<std::pair<TileType, SDL_Rect>>
 		&gameObjectsPositionsMap) -> void;
 	auto renderGridBackground() -> void;
 	auto createBaseRect()->RectAndTexture *;
@@ -44,7 +44,7 @@ public:
 		Uint32 flags = 0);
 	auto getWindowWidth() const { return _windowWidth; }
 	auto getWindowHeight() const { return _windowHeight; }
-	auto renderGrid(const std::vector<std::pair<TileType, SDL_Point>>
+	auto renderGrid(const std::vector<std::pair<TileType, SDL_Rect>>
 		&gameObjectsPositionsVector) -> void;
 	auto renderText(const std::string &textureText, SDL_Color textColor, int x,
 		int y) -> void;

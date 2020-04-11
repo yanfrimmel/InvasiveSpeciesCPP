@@ -21,6 +21,7 @@ public:
 	auto setPosition(Vector2d<float> position) -> void;
 	auto getPosition()->Vector2d<float> &;
 	auto getTileType()->TileType;
+	auto getSize()->Uint32;
 	auto onDestinationSelected(Vector2d<float> point, float fps) -> void;
 	~GameObject();
 };

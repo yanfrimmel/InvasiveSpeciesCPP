@@ -19,8 +19,7 @@ private:
 	auto gameLoop(Uint32 fpsCap = 60) -> void;
 	auto handleMouseState(float fps) -> void;
 	auto static checkForSDLQuitEvents() -> bool;
-	auto convertStateToGraphicsMap()
-		->std::vector<std::pair<TileType, SDL_Point>>;
+	auto convertStateToGraphicsMap()->std::vector<std::pair<TileType, SDL_Rect>>;
 	auto validatePlayerPosition() -> void;
 	auto loadMap(const char *filename) -> void;
 
