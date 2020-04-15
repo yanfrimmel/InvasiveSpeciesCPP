@@ -1,35 +1,45 @@
 #include "GameState.h"
 
 GameState::GameState(unsigned short int windowWidth, unsigned short int windowHeight) {
-	//TODO: init pistions from a map file
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 400, 450 }, HUMAN_FEMALE));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 500, 600 }, CHICKEN_FEMALE));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 464, 600 }, CHICKEN_MALE));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 700, 800 }, WATER));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 732, 800 }, WATER));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 660 , 600 }, STONE));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 700 , 700 }, GRASS));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 700 , 732 }, GRASS));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 732 , 700 }, GRASS));
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 732 , 732 }, GRASS));
+	//TODO: init positions from a map file
 
-	_gameObjects.push_back(GameObject(DEFAULT_OBJECT_SIZE, 200, { 600, 600 }, HUMAN_MALE));
-	_player = &_gameObjects.at(_gameObjects.size() - 1);
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 500, 900 }, CHICKEN_FEMALE));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 464, 900 }, CHICKEN_MALE));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 700, 800 }, WATER));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 732, 800 }, WATER));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 660 , 1600 }, STONE));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 700 }, GRASS));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 732 }, GRASS));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 700 }, GRASS));
+	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 732 }, GRASS));
+	_gameObjects.emplace_back(new Human(Animal::male, { 400, 600 }));
+	_gameObjects.emplace_back(new Human(Animal::female, { 600, 600 }));
 	initCameraPosition(windowWidth, windowHeight);
 }
 
 auto GameState::initCameraPosition(unsigned short int windowWidth, unsigned short int windowHeight) -> void {
-	_camera = { _player->getPosition().x - windowWidth / 2, _player->getPosition().y - windowHeight / 2 };
+	_camera = { (getPlayer()->getPosition().x - windowWidth / 2), (getPlayer()->getPosition().y - windowHeight / 2) };
 }
 
 auto GameState::getCamera() -> Vector2d<float> { return _camera; }
 
 auto GameState::setCamera(Vector2d<float> camera) -> void { _camera = camera; }
 
-auto GameState::getPlayer() -> GameObject * { return _player; }
+auto GameState::getPlayer() -> std::unique_ptr<GameObject>& { return  _gameObjects.at(_gameObjects.size() - 1); }
 
-auto GameState::getGameObjects() -> std::vector<GameObject>& {
+auto GameState::getGameObjects() ->std::vector<std::unique_ptr<GameObject>>& {
 	return _gameObjects;
+}
+
+auto GameState::updateGameObjects(float fps) -> void
+{
+	if (fps <= 0) return;
+	for (auto & gameObjecet : _gameObjects) {
+		if (dynamic_cast<Animal*> (gameObjecet.get())) {
+			Animal* animal = ((Animal*)gameObjecet.get());
+			animal->think(_gameObjects, fps);
+		}
+	}
 }
 
 GameState::~GameState() {

@@ -1,5 +1,4 @@
-#ifndef GAME_H /* Include guard */
-#define GAME_H
+#pragma once
 
 #include "FPSCounter.h"
 #include "GameState.h"
@@ -28,5 +27,3 @@ public:
 	auto start() -> void;
 	~Game();
 };
-
-#endif

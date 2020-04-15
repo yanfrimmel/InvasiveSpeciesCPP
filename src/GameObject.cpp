@@ -18,13 +18,13 @@ auto GameObject::getTileType() -> TileType { return _tileType; }
 
 auto GameObject::getSize() -> Uint32 { return _size; }
 
-auto GameObject::onDestinationSelected(Vector2d<float> selectedPosition, float fps) -> void {
+auto GameObject::onDestinationSelected(Vector2d<int> selectedPosition, float fps) -> void {
+	if (fps == 0.0) return;
 	float proximityThreshold = _size / 2.F;
 	float elapsed = 1 / fps;
-	auto currPos = Vector2d<float>(_position.x, _position.y);
-	float distanceBetweenPoints = Vector2d<float>::distance(currPos, selectedPosition);
-	auto direction = Vector2d<float>::normal(selectedPosition - currPos);
-	auto newPosition = currPos + (direction * (_speed * elapsed));
+	float distanceBetweenPoints = Vector2d<float>::distance(_position, selectedPosition);
+	auto direction = Vector2d<float>::normal((Vector2d<float>)selectedPosition - _position);
+	Vector2d<float> newPosition = _position + ((Vector2d<float>)direction * (float)_speed * elapsed);
 	if (distanceBetweenPoints > proximityThreshold) {
 		_position.x = newPosition.x;
 		_position.y = newPosition.y;

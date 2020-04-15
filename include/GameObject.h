@@ -1,5 +1,4 @@
-#ifndef GAMEOBJECT_H /* Include guard */
-#define GAMEOBJECT_H
+#pragma once
 
 #include "Common.h"
 #include "Vector2d.h"
@@ -22,8 +21,6 @@ public:
 	auto getPosition()->Vector2d<float> &;
 	auto getTileType()->TileType;
 	auto getSize()->Uint32;
-	auto onDestinationSelected(Vector2d<float> point, float fps) -> void;
-	~GameObject();
+	auto onDestinationSelected(Vector2d<int> point, float fps) -> void;
+	virtual ~GameObject();
 };
-
-#endif

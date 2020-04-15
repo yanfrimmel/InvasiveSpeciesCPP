@@ -1,5 +1,4 @@
-#ifndef COMMON_H /* Include guard */
-#define COMMON_H
+#pragma once
 
 #ifdef __unix__         
 #include <SDL2/SDL.h>
@@ -28,6 +27,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <typeinfo>
 
 template <typename F>
 auto compose(F&& f)
@@ -80,6 +80,3 @@ static const TileType tileTypeVector[] = { SOIL, GRASS, STONE, HUMAN_MALE,
 #define CHICKEN_MALE_IMAGE_PATH ("assets/images/chicken_male.png")
 #define CHICKEN_FEMALE_IMAGE_PATH ("assets/images/chicken_female.png")
 #define WATER_IMAGE_PATH ("assets/images/water.png")
-
-
-#endif

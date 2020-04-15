@@ -1,5 +1,4 @@
-#ifndef GRAPHICS_H
-#define GRAPHICS_H
+#pragma once
 
 #include "Common.h"
 
@@ -52,5 +51,3 @@ public:
 	auto presentRender() -> void;
 	~Graphics();
 };
-
-#endif

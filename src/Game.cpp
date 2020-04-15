@@ -21,12 +21,12 @@ auto Game::start() -> void {
 auto Game::convertStateToGraphicsMap() -> std::vector<std::pair<TileType, SDL_Rect>> {
 	std::vector<std::pair<TileType, SDL_Rect>> convertedVector;
 
-	for (auto o : _gameState->getGameObjects()) {
+	for (auto& o : _gameState->getGameObjects()) {
 		convertedVector.push_back(
-			std::make_pair(o.getTileType(), SDL_Rect{ (int)o.getPosition().x,
-													  (int)o.getPosition().y,
-													  (int)o.getSize(),
-													  (int)o.getSize() }));
+			std::make_pair(o->getTileType(), SDL_Rect{ (int)o->getPosition().x,
+													  (int)o->getPosition().y,
+													  (int)o->getSize(),
+													  (int)o->getSize() }));
 	}
 
 	auto end = std::remove_if(convertedVector.begin(), convertedVector.end(),
@@ -65,11 +65,11 @@ auto Game::validatePlayerPosition() -> void {
 	if (playerPosition.y < 0) {
 		playerPosition.y = 0;
 	}
-	if (playerPosition.x > _worldWidth) {
-		playerPosition.x = (float)_worldWidth;
+	if (playerPosition.x > (float)_worldWidth) {
+		playerPosition.x = _worldWidth;
 	}
-	if (playerPosition.y > _worldHeight) {
-		playerPosition.y = (float)_worldHeight;
+	if (playerPosition.y > (float)_worldHeight) {
+		playerPosition.y = _worldHeight;
 	}
 }
 
@@ -81,12 +81,9 @@ auto Game::handleMouseState(float fps) -> void {
 		auto halfWindowWidth = _graphics->getWindowWidth() / 2;
 		auto halfWindowHeight = _graphics->getWindowHeight() / 2;
 		_gameState->setCamera(
-		{ _gameState->getPlayer()->getPosition().x - halfWindowWidth,
-		 _gameState->getPlayer()->getPosition().y - halfWindowHeight });
+		{ _gameState->getPlayer()->getPosition().x - halfWindowWidth,  _gameState->getPlayer()->getPosition().y - halfWindowHeight });
 		_gameState->getPlayer()->onDestinationSelected(
-		{ (float)_mouseInput->mouseX + _gameState->getCamera().x,
-		 (float)_mouseInput->mouseY + _gameState->getCamera().y },
-			fps);
+       { _mouseInput->mouseX + (int)_gameState->getCamera().x, _mouseInput->mouseY + (int)_gameState->getCamera().y }, fps);
 
 		validatePlayerPosition();
 	}
@@ -102,6 +99,9 @@ auto Game::gameLoop(Uint32 fpsCap) -> void {
 		_graphics->clearRender();
 		float averageFPS = _fpsCounter->getAverageFramesPerSecond();
 		handleMouseState(averageFPS);
+		//Human* player = static_cast<Human *>(_gameState->getPlayer().get());
+		//player->think(_gameState->getGameObjects(), averageFPS); // TODO: remove after test
+		_gameState->updateGameObjects(averageFPS);
 		_graphics->renderGrid(convertStateToGraphicsMap());
 		_graphics->renderText("FPS: " + std::to_string((int)averageFPS), { 255, 255, 0, 255 }, 0, 0);
 		_graphics->presentRender();

@@ -26,6 +26,18 @@ auto Vector2d<T>::operator/(const Vector2d<T> &v) const -> Vector2d<T> {
 	return Vector2d<T>(x / v.x, y / v.y);
 }
 
+template<class T>
+Vector2d<T>::operator Vector2d<float>()
+{
+	return Vector2d<float>((float)x, (float)y);
+}
+
+template<class T>
+Vector2d<T>::operator Vector2d<int>()
+{
+	return Vector2d<int>((int)x, (int)y);
+}
+
 template <class T>
 auto Vector2d<T>::operator==(const Vector2d<T> &v) const -> bool {
 	return ((x == v.x) && (y == v.y));
@@ -53,7 +65,7 @@ auto Vector2d<T>::operator<=(const Vector2d<T> &v) const -> bool {
 		(x * x + y * y) == (v.x * v.x + v.y * v.y);
 }
 
-template <class T> auto Vector2d<T>::operator-() const -> Vector2d<T> {
+auto Vector2d<float>::operator-() const -> Vector2d<float> {
 	return Vector2d(-x, -y);
 }
 

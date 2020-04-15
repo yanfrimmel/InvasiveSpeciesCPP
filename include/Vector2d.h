@@ -1,5 +1,4 @@
-#ifndef VECTOR2D_H
-#define VECTOR2D_H
+#pragma once
 
 #include <cfloat>
 #include <climits>
@@ -25,7 +24,8 @@ public:
 	auto operator-(const Vector2d &) const->Vector2d;
 	auto operator*(const Vector2d &)const->Vector2d;
 	auto operator/(const Vector2d &) const->Vector2d;
-
+	operator Vector2d<float>();
+	operator Vector2d<int>();
 	// Check if the Vectors have the same values.
 	auto operator==(const Vector2d &) const -> bool;
 
@@ -66,5 +66,3 @@ public:
 	static auto getIntersect(const Vector2d &, const Vector2d &, const Vector2d &,
 		const Vector2d &)->Vector2d;
 };
-
-#endif

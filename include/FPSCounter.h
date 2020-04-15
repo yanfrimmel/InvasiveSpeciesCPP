@@ -1,5 +1,4 @@
-#ifndef FPSCOUNTER_H /* Include guard */
-#define FPSCOUNTER_H
+#pragma once
 
 #include "Common.h"
 
@@ -30,5 +29,3 @@ public:
 	auto getAverageFramesPerSecond() -> float;
 	auto getLastFramesPerSecond() -> float;
 };
-
-#endif
