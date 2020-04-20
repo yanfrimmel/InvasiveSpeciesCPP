@@ -8,8 +8,8 @@ Game::Game(Configurations configurations) {
 		configurations.windowHeight);
 	_mouseInput = std::make_unique<MouseInput>(MouseInput{ -1, -1, 0 });
 	_fpsCounter = std::make_unique<FPSCounter>();
-	_worldWidth = configurations.worldWidth;
-	_worldHeight = configurations.worldHeight;
+	globalParams::worldWidth = configurations.worldWidth;
+	globalParams::worldHeight = configurations.worldHeight;
 	_fpsCap = configurations.fpsCap;
 }
 
@@ -65,11 +65,11 @@ auto Game::validatePlayerPosition() -> void {
 	if (playerPosition.y < 0) {
 		playerPosition.y = 0;
 	}
-	if (playerPosition.x > (float)_worldWidth) {
-		playerPosition.x = _worldWidth;
+	if (playerPosition.x > (float)globalParams::worldWidth) {
+		playerPosition.x = (float)globalParams::worldWidth;
 	}
-	if (playerPosition.y > (float)_worldHeight) {
-		playerPosition.y = _worldHeight;
+	if (playerPosition.y > (float)globalParams::worldHeight) {
+		playerPosition.y = (float)globalParams::worldHeight;
 	}
 }
 
@@ -81,7 +81,7 @@ auto Game::handleMouseState(float fps) -> void {
 		auto halfWindowWidth = _graphics->getWindowWidth() / 2;
 		auto halfWindowHeight = _graphics->getWindowHeight() / 2;
 		_gameState->setCamera(
-		{ _gameState->getPlayer()->getPosition().x - halfWindowWidth,  _gameState->getPlayer()->getPosition().y - halfWindowHeight });
+		{ _gameState->getPlayer()->getPosition().x - halfWindowWidth, _gameState->getPlayer()->getPosition().y - halfWindowHeight });
 		_gameState->getPlayer()->onDestinationSelected(
        { _mouseInput->mouseX + (int)_gameState->getCamera().x, _mouseInput->mouseY + (int)_gameState->getCamera().y }, fps);
 
@@ -99,8 +99,6 @@ auto Game::gameLoop(Uint32 fpsCap) -> void {
 		_graphics->clearRender();
 		float averageFPS = _fpsCounter->getAverageFramesPerSecond();
 		handleMouseState(averageFPS);
-		//Human* player = static_cast<Human *>(_gameState->getPlayer().get());
-		//player->think(_gameState->getGameObjects(), averageFPS); // TODO: remove after test
 		_gameState->updateGameObjects(averageFPS);
 		_graphics->renderGrid(convertStateToGraphicsMap());
 		_graphics->renderText("FPS: " + std::to_string((int)averageFPS), { 255, 255, 0, 255 }, 0, 0);

@@ -10,8 +10,6 @@ private:
 	std::unique_ptr<GameState> _gameState;
 	std::unique_ptr<MouseInput> _mouseInput;
 	std::unique_ptr<FPSCounter> _fpsCounter;
-	Uint32 _worldWidth;
-	Uint32 _worldHeight;
 	Uint32 _fpsCap;
 	std::vector<GameObject> _map;
 

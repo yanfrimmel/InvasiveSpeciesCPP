@@ -1,9 +1,24 @@
 #include "Animal.h"
 
-Animal::Animal(Uint32 size, Uint32 speed, Vector2d<float> position, TileType tileType) 
+auto Animal::resetTargetPosition() -> void
+{
+	_targetPosition.x = -1;
+}
+
+auto Animal::hasTargetPostion() -> bool
+{
+	return _targetPosition.x >= 0;
+}
+
+Animal::Animal(Uint32 size, Uint32 speed, Vector2d<float> position, TileType tileType)
 	: GameObject(size, speed, position, tileType)
 {
+	resetTargetPosition();
+}
 
+auto Animal::getMaxMultipleBirth() -> int
+{
+	return _MAX_MULTIPLE_BIRTH;
 }
 
 auto Animal::isDead() -> bool
@@ -81,15 +96,25 @@ auto Animal::isSleeping() -> bool
 //	_memorySize = memorySize;
 //}
 //
-//auto Animal::setHydration(float hydration) -> void
-//{
-//	_hydration = hydration;
-//}
-//
-//auto Animal::setNutrition(float nutrition) -> void
-//{
-//	_nutrition = nutrition;
-//}
+auto Animal::setNumberOfFetuses(int fetuses) -> void
+{
+	_numberOfFetuses = fetuses;
+}
+
+auto Animal::setTimeOfStartOfPregnancy(float timeOfStartOfPregnancy) -> void
+{
+	_timeOfStartOfPregnancy = timeOfStartOfPregnancy;
+}
+
+auto Animal::setHydration(float hydration) -> void
+{
+	_hydration = hydration;
+}
+
+auto Animal::setNutrition(float nutrition) -> void
+{
+	_nutrition = nutrition;
+}
 
 auto Animal::isInSight(GameObject& object) -> bool
 {
@@ -105,12 +130,26 @@ auto Animal::tryToMate(Animal & partner, float fps) -> bool
 		_nutrition >= _MAX_NUTRITION / 4 &&
 		partner.getGender() == female) {
 		onDestinationSelected(partner.getPosition(), fps);
+		float distanceBetweenPoints = Vector2d<float>::distance(getPosition(), partner.getPosition());
+		return distanceBetweenPoints <= getSize() / 2;
 	}
 	return false;
 }
 
-Animal::~Animal()
+void Animal::mateWith(Animal & partner)
 {
+	this->_hydration /= 2; // TODO: find a better way
+	this->_nutrition /= 2; // TODO: find a better way
+	partner.setHydration(partner.getHydration() / 2);
+	partner.setNutrition(partner.getNutrition() / 2);
+	if (partner.getNumberOfFetuses() > 0) return;
+	auto chanceOfPregnancy = globalRNG::rng();
+	if (chanceOfPregnancy > 0.5) {
+		partner.setTimeOfStartOfPregnancy(partner.getAge());
+		auto fetuses = (float)partner.getMaxMultipleBirth() *  globalRNG::rng();
+		partner.setNumberOfFetuses((int)fetuses);
+		std::cout << "fetuses: " << fetuses << std::endl;
+	}
 }
 
 auto Animal::getHp() -> float
@@ -163,6 +202,15 @@ auto Animal::getMemory() -> std::vector<Memory>&
 	return _memory;
 }
 
+auto Animal::getNumberOfFetuses() -> int
+{
+	return _numberOfFetuses;
+}
+
 //void Animal::think(std::vector<GameObject> objectsInSight, float fps) {
 //	std::cout << "shit" << std::endl;
 //};
+
+Animal::~Animal()
+{
+}

@@ -1,17 +1,17 @@
 #pragma once
 
 #ifdef __unix__         
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_error.h>
-#include <SDL2/SDL_image.h>
-#include <SDL2/SDL_timer.h>
-#include <SDL2/SDL_ttf.h>
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_error.h>
+	#include <SDL2/SDL_image.h>
+	#include <SDL2/SDL_timer.h>
+	#include <SDL2/SDL_ttf.h>
 #elif defined(_WIN32) || defined(WIN32) 
-#include <SDL.h>
-#include <SDL_error.h>
-#include <SDL_image.h>
-#include <SDL_timer.h>
-#include <SDL_ttf.h>
+	#include <SDL.h>
+	#include <SDL_error.h>
+	#include <SDL_image.h>
+	#include <SDL_timer.h>
+	#include <SDL_ttf.h>
 #endif
 
 #include <algorithm>
@@ -28,6 +28,14 @@
 #include <utility>
 #include <vector>
 #include <typeinfo>
+#include "GlobalRNG.h"
+
+namespace globalParams
+{
+	extern int worldWidth;
+	extern int worldHeight;
+}
+
 
 template <typename F>
 auto compose(F&& f)
