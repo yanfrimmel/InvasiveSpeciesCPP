@@ -11,7 +11,7 @@ Human::Human(Gender gender, Vector2d<float> position) :
 	_hp = _MAX_HP;
 	_hydration = _MAX_HYDRATION;
 	_nutrition = _MAX_NUTRITION;
-	_sight = 200;
+	_sight = 300;
 	if (_gender == male) {
 		_MAX_MULTIPLE_BIRTH = 0;
 		_strength = 10.0F;
@@ -27,30 +27,37 @@ Human::Human(Gender gender, Vector2d<float> position) :
 void Human::think(std::vector<std::unique_ptr<GameObject>>& objectsInSight, float fps)
 {
 	_age += 1 / (fps); //TODO * 60
+
+	if (_gender == female && _timeOfStartOfPregnancy > 0) {
+		tryGiveLabor(objectsInSight);
+	}
+
+	if (_isPlayer) return;
+
 	for (auto& obj : objectsInSight) {
 		if (this != obj.get() && isInSight(*obj.get()) && dynamic_cast<Human*> (obj.get())) {
 			auto mate = ((Human*)obj.get());
-			if (tryToMate(*mate, fps)) {
-			    mateWith(*mate);
+			if (tryToMate(*mate)) {
+				onDestinationSelected(mate->getPosition(), fps);
+				if (isReachedDestination(mate->getPosition())) {
+					mateWith(*mate);
+				}
 				resetTargetPosition();
 				return;
 			}
 		}
 	}
 
-	if (_gender == female && _timeOfStartOfPregnancy > 0) {
-		tryGiveLabor(objectsInSight);
-	}
-
 	if (!hasTargetPostion()) {
 		_targetPosition = { globalParams::worldWidth * globalRNG::rng(), globalParams::worldHeight * globalRNG::rng() };
 		std::cout << "id: " << _id << ", _targetPosition: " << _targetPosition.x <<", " << _targetPosition.y << std::endl;
 	}
-	
+
 	if (isReachedDestination(_targetPosition)) {
 		resetTargetPosition();
 	}
-	onDestinationSelected(_targetPosition, fps); // this is last option
+	onDestinationSelected(_targetPosition, fps);
+	
 }
 
 void Human::tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& objectList)

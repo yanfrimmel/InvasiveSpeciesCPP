@@ -19,21 +19,41 @@ auto GameObject::getTileType() -> TileType { return _tileType; }
 auto GameObject::getSize() -> Uint32 { return _size; }
 
 auto GameObject::onDestinationSelected(Vector2d<int> selectedPosition, float fps) -> void {
+	if (fps == 0.0) return;
 	if (!isReachedDestination(selectedPosition)) {
-		if (fps == 0.0) return;
 		float elapsed = 1 / fps;
 		auto direction = Vector2d<float>::normal((Vector2d<float>)selectedPosition - _position);
 		Vector2d<float> newPosition = _position + ((Vector2d<float>)direction * (float)_speed * elapsed);
-		_position.x = newPosition.x;
-		_position.y = newPosition.y;
+		_position = newPosition;
 	}
+	validatePosition();
 }
 
-auto GameObject::isReachedDestination(Vector2d<float> destination) -> bool
+auto GameObject::isReachedDestination(Vector2d<int> destination) -> bool
 {
-	float distanceBetweenPoints = Vector2d<float>::distance(_position, destination);
+	float distanceBetweenPoints = Vector2d<int>::distance(_position, destination);
 	float proximityThreshold = _size / 2.F;
-	return distanceBetweenPoints <= proximityThreshold;
+	return (int)distanceBetweenPoints <= proximityThreshold;
+}
+
+auto GameObject::setAsPlayer() -> void
+{
+	_isPlayer = true;
+}
+
+auto GameObject::validatePosition() -> void {
+	if (_position.x < 0) {
+		_position.x = 0;
+	}
+	if (_position.y < 0) {
+		_position.y = 0;
+	}
+	if (_position.x >(float)globalParams::worldWidth) {
+		_position.x = (float)globalParams::worldWidth;
+	}
+	if (_position.y >(float)globalParams::worldHeight) {
+		_position.y = (float)globalParams::worldHeight;
+	}
 }
 
 GameObject::~GameObject() {

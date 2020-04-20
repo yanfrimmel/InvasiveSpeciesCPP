@@ -17,7 +17,6 @@ private:
 	auto handleMouseState(float fps) -> void;
 	auto static checkForSDLQuitEvents() -> bool;
 	auto convertStateToGraphicsMap()->std::vector<std::pair<TileType, SDL_Rect>>;
-	auto validatePlayerPosition() -> void;
 	auto loadMap(const char *filename) -> void;
 
 public:

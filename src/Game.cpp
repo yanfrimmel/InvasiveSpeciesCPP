@@ -57,22 +57,6 @@ auto Game::checkForSDLQuitEvents() -> bool {
 	return false;
 }
 
-auto Game::validatePlayerPosition() -> void {
-	Vector2d<float> &playerPosition = _gameState->getPlayer()->getPosition();
-	if (playerPosition.x < 0) {
-		playerPosition.x = 0;
-	}
-	if (playerPosition.y < 0) {
-		playerPosition.y = 0;
-	}
-	if (playerPosition.x > (float)globalParams::worldWidth) {
-		playerPosition.x = (float)globalParams::worldWidth;
-	}
-	if (playerPosition.y > (float)globalParams::worldHeight) {
-		playerPosition.y = (float)globalParams::worldHeight;
-	}
-}
-
 auto Game::handleMouseState(float fps) -> void {
 	_mouseInput->mouseState =
 		SDL_GetMouseState(&_mouseInput->mouseX, &_mouseInput->mouseY);
@@ -81,11 +65,9 @@ auto Game::handleMouseState(float fps) -> void {
 		auto halfWindowWidth = _graphics->getWindowWidth() / 2;
 		auto halfWindowHeight = _graphics->getWindowHeight() / 2;
 		_gameState->setCamera(
-		{ _gameState->getPlayer()->getPosition().x - halfWindowWidth, _gameState->getPlayer()->getPosition().y - halfWindowHeight });
-		_gameState->getPlayer()->onDestinationSelected(
+		{ _gameState->getPlayer().getPosition().x - halfWindowWidth, _gameState->getPlayer().getPosition().y - halfWindowHeight });
+		_gameState->getPlayer().onDestinationSelected(
        { _mouseInput->mouseX + (int)_gameState->getCamera().x, _mouseInput->mouseY + (int)_gameState->getCamera().y }, fps);
-
-		validatePlayerPosition();
 	}
 }
 

@@ -73,7 +73,7 @@ public:
 	virtual void tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& gameObjects) = 0;
 	auto tryToRemember(GameObject objectToRemeber)->void; // if reached max memory size forget the oldest memory
 	auto isInSight(GameObject& object) -> bool;
-	auto tryToMate(Animal& partner, float fps) -> bool;
+	auto tryToMate(Animal& partner) -> bool;
 	auto setHydration(float)->void;
 	auto setNutrition(float)->void;
 	auto setTimeOfStartOfPregnancy(float) -> void;

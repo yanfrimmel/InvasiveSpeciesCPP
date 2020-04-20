@@ -121,19 +121,15 @@ auto Animal::isInSight(GameObject& object) -> bool
 	return Vector2d<float>::distance(getPosition(), object.getPosition()) <= _sight;
 }
 
-auto Animal::tryToMate(Animal & partner, float fps) -> bool
+auto Animal::tryToMate(Animal & partner) -> bool
 {
-	if (typeid(*this) == typeid(partner) &&
+	return typeid(*this) == typeid(partner) &&
 		_gender == male &&
 		_hp == _MAX_HP &&
 		_hydration >= _MAX_HYDRATION / 4 &&
 		_nutrition >= _MAX_NUTRITION / 4 &&
-		partner.getGender() == female) {
-		onDestinationSelected(partner.getPosition(), fps);
-		float distanceBetweenPoints = Vector2d<float>::distance(getPosition(), partner.getPosition());
-		return distanceBetweenPoints <= getSize() / 2;
-	}
-	return false;
+		partner.getGender() == female && 
+		partner._numberOfFetuses == 0;
 }
 
 void Animal::mateWith(Animal & partner)

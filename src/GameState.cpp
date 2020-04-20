@@ -1,6 +1,7 @@
 #include "GameState.h"
 
-GameState::GameState(unsigned short int windowWidth, unsigned short int windowHeight) {
+GameState::GameState(unsigned short int windowWidth, unsigned short int windowHeight)
+{
 	//TODO: init positions from a map file
 	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 500, 900 }, CHICKEN_FEMALE));
 	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 464, 900 }, CHICKEN_MALE));
@@ -12,20 +13,22 @@ GameState::GameState(unsigned short int windowWidth, unsigned short int windowHe
 	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 700 }, GRASS));
 	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 732 }, GRASS));
 	_gameObjects.emplace_back(new Human(Animal::male, { 400, 600 }));
-
 	_gameObjects.emplace_back(new Human(Animal::female, { 600, 700 }));
+	_player = _gameObjects.back().get();
+	_player->setAsPlayer();
+
 	initCameraPosition(windowWidth, windowHeight);
 }
 
 auto GameState::initCameraPosition(unsigned short int windowWidth, unsigned short int windowHeight) -> void {
-	_camera = { (getPlayer()->getPosition().x - windowWidth / 2), (getPlayer()->getPosition().y - windowHeight / 2) };
+	_camera = { (_player->getPosition().x - windowWidth / 2), (_player->getPosition().y - windowHeight / 2) };
 }
 
 auto GameState::getCamera() -> Vector2d<float> { return _camera; }
 
 auto GameState::setCamera(Vector2d<float> camera) -> void { _camera = camera; }
 
-auto GameState::getPlayer() -> std::unique_ptr<GameObject>& { return  _gameObjects.at(_gameObjects.size() - 1); }
+auto GameState::getPlayer() -> GameObject& { return *_player; }
 
 auto GameState::getGameObjects() ->std::vector<std::unique_ptr<GameObject>>& {
 	return _gameObjects;
