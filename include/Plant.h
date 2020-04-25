@@ -9,6 +9,8 @@ public:
 	Plant(Uint32 size, Vector2d<float> position, TileType tileType);
 	virtual void act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps);
 	virtual std::unique_ptr<Plant> createNewPlant(Vector2d<float> position) = 0;
+	Type getType();
+	auto beEaten(float nutrition) -> float; // return the number of successfully consumed plant
 	virtual ~Plant();
 
 protected:
@@ -20,8 +22,6 @@ protected:
 	auto consumeTime(float fps) -> void;
 	auto tryToReproduce() -> bool;
 	auto reprodue(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
-	auto die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
+	auto removeObject(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
 	auto isDead() -> bool;
-
-
 };

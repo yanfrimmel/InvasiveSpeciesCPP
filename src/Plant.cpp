@@ -8,7 +8,7 @@ Plant::Plant(Uint32 size, Vector2d<float> position, TileType tileType)
 void Plant::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
 {
 	if (isDead()) {
-		die(gameObjects);
+		removeObject(gameObjects);
 		return;
 	}
 
@@ -41,19 +41,34 @@ auto Plant::reprodue(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> v
 	std::cout << "new plant: " << _species << std::endl;
 }
 
-auto Plant::die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
+auto Plant::removeObject(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
 {
 	std::cout << "death plant: " << this->getId() << std::endl;
-	auto end = std::remove_if(gameObjects.begin(), gameObjects.end(),
-		[this](std::unique_ptr<GameObject> & o) {
-		return this->getId() == o->getId();
-	});
-	gameObjects.erase(end, gameObjects.end());
+	GameObject::removeObject(gameObjects);
 }
 
 auto Plant::isDead() -> bool
 {
 	return _hp <= 0;
+}
+
+GameObject::Type Plant::getType()
+{
+	return plant;
+}
+
+auto Plant::beEaten(float nutrition) -> float
+{
+	if (_hp > nutrition) {
+		_hp -= nutrition;
+		return nutrition;
+	}
+	else
+	{
+		auto temp = _hp;
+		_hp = 0;
+		return temp;
+	}
 }
 
 Plant::~Plant()

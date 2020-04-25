@@ -31,14 +31,10 @@ auto Animal::isDead() -> bool
 	return _hp <= 0;
 }
 
-auto Animal::die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
+auto Animal::removeObject(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
 {
 	std::cout << "death: " << this->getId() << std::endl;
-	auto end = std::remove_if(gameObjects.begin(), gameObjects.end(),
-		[this](std::unique_ptr<GameObject> & o) {
-		return this->getId() == o->getId();
-	});
-	gameObjects.erase(end, gameObjects.end());
+	GameObject::removeObject(gameObjects);
 }
 
 auto Animal::consumeTime(float fps) -> void
@@ -55,7 +51,7 @@ auto Animal::consumeTime(float fps) -> void
 void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
 {
 	if (isDead()) {
-		die(gameObjects);
+		removeObject(gameObjects);
 		return;
 	}
 
@@ -68,12 +64,26 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 	if (_isPlayer) return;
 
 	for (auto& obj : gameObjects) {
-		if (this != obj.get() && isInSight(*obj.get()) && ((Animal*)obj.get())->getSpecies() == _species) {
-			auto mate = ((Animal*)obj.get());
-			if (tryToMate(*mate)) {
-				onDestinationSelected(mate->getPosition(), fps);
-				if (isReachedDestination(mate->getPosition())) {
+		if (this != obj.get() && isInSight(*obj.get())) {
+			if (tryToMate(*obj.get())) {
+				onDestinationSelected(obj.get()->getPosition(), fps);
+				if (isReachedDestination(obj.get()->getPosition())) {
+					auto mate = (Animal*)obj.get();
 					mateWith(*mate);
+				}
+				resetTargetPosition();
+				return;
+			}
+
+			if (tryToEat(*obj.get())) {
+				onDestinationSelected(obj->getPosition(), fps);
+				if (isReachedDestination(obj->getPosition())) {
+					if (obj.get()->getType() == plant) { //TODO: implement for animal
+						auto mate = (Plant*)obj.get();
+						std::cout << _id << ": nutrition: "<< _nutrition << "eats: " << obj.get()->getId() << std::endl;
+						_nutrition += ((Plant*)obj.get())->beEaten(_MAX_NUTRITION - _nutrition);
+						std::cout << _id << ": nutrition: " << _nutrition << "aftwe: " << std::endl;
+					}
 				}
 				resetTargetPosition();
 				return;
@@ -90,6 +100,11 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 		resetTargetPosition();
 	}
 	onDestinationSelected(_targetPosition, fps);
+}
+
+GameObject::Type Animal::getType()
+{
+	return animal;
 }
 
 auto Animal::getGender() -> Gender
@@ -112,56 +127,6 @@ auto Animal::isSleeping() -> bool
 	return _sleeping;
 }
 
-//auto Animal::setGender(Animal::Gender gender) -> void
-//{
-//	_gender = gender;
-//}
-
-//auto Animal::setDiet(Animal::Diet diet) -> void
-//{
-//	_diet = diet;
-//}
-//
-//auto Animal::setBehavior(Animal::Behavior behavior) -> void
-//{
-//	_behavior = behavior;
-//}
-
-//auto Animal::setSleeping(bool isASleep) -> void
-//{
-//	_sleeping = isASleep;
-//}
-
-//auto Animal::setHp(float hp) -> void
-//{
-//	_hp = hp;
-//}
-//
-//auto Animal::setStrength(float strength) -> void
-//{
-//	_strength = strength;
-//}
-//
-//auto Animal::setAgility(float agility) -> void
-//{
-//	_agility = agility;
-//}
-//
-//auto Animal::setSight(float sight) -> void
-//{
-//	_sight = sight;
-//}
-//
-//auto Animal::setMass(float mass) -> void
-//{
-//	_mass = mass;
-//}
-//
-//auto Animal::setMemorySize(int memorySize) -> void
-//{
-//	_memorySize = memorySize;
-//}
-//
 auto Animal::setNumberOfFetuses(int fetuses) -> void
 {
 	_numberOfFetuses = fetuses;
@@ -187,18 +152,22 @@ auto Animal::isInSight(GameObject& object) -> bool
 	return Vector2d<float>::distance(getPosition(), object.getPosition()) <= _sight;
 }
 
-auto Animal::tryToMate(Animal & partner) -> bool
+auto Animal::tryToMate(GameObject & partner) -> bool
 {
-	return typeid(*this) == typeid(partner) &&
-		_gender == male &&
-		_hp == _MAX_HP &&
-		partner.getGender() == female &&
-		partner._numberOfFetuses == 0 &&
-		_hydration >= _MAX_HYDRATION / 4 &&
-		_nutrition >= _MAX_NUTRITION / 4;
+	if (partner.getType() == animal) {
+		auto mate = (Animal*)&partner;
+		return getSpecies() == mate->getSpecies() &&
+			_gender == male &&
+			_hp == _MAX_HP &&
+			mate->getGender() == female &&
+			mate->_numberOfFetuses == 0 &&
+			_hydration >= _MAX_HYDRATION / 4 &&
+			_nutrition >= _MAX_NUTRITION / 4;
+	}
+	return false;
 }
 
-void Animal::mateWith(Animal & partner)
+auto Animal::mateWith(Animal & partner) -> void
 {
 	this->_hydration -= _MAX_HYDRATION / 4; // TODO: find a better way
 	this->_nutrition -= _MAX_NUTRITION / 4; // TODO: find a better way
@@ -261,6 +230,12 @@ auto Animal::getAge() -> float
 auto Animal::getMemory() -> std::vector<Memory>&
 {
 	return _memory;
+}
+
+auto Animal::beEaten(float nutrition) -> float
+{
+	return 0.0F;
+
 }
 
 auto Animal::getNumberOfFetuses() -> int

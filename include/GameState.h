@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Human.h"
 #include "Grass.h"
+#include "Water.h"
 
 class GameState {
 private:

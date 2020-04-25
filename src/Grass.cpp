@@ -9,7 +9,7 @@ Grass::Grass(Vector2d<float> position) : Plant(32, position, GRASS)
 	_grothRate = 10;
 }
 
-std::unique_ptr<Plant> Grass::createNewPlant(Vector2d<float> position)
+auto Grass::createNewPlant(Vector2d<float> position) -> std::unique_ptr<Plant>
 {
 	return std::make_unique<Grass>(position);
 }

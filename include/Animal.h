@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Memory.h"
+#include "Plant.h"
 
 class Animal : public GameObject {
 
@@ -28,8 +29,8 @@ public:
 	auto getAge()->float;
 	auto getMemory()->std::vector<Memory>&;
 	auto attack(Animal& victim)->void;
-	auto tryToEat(GameObject& food)->void;
-	auto eat(GameObject& food)->void;
+	virtual bool tryToEat(GameObject& food) = 0;
+	auto beEaten(float nutrition) -> float;
 	auto goToSleep()->void; // this will recover hp
 	auto awake()->void;
 	auto mateWith(Animal& partner) -> void;
@@ -37,17 +38,18 @@ public:
 	virtual std::unique_ptr<Animal> createNewAnimal(Gender gender, Vector2d<float> position) = 0;
 	auto tryToRemember(GameObject& objectToRemeber)->void; // if reached max memory size forget the oldest memory
 	auto isInSight(GameObject& object) -> bool;
-	auto tryToMate(Animal& partner) -> bool;
+	auto tryToMate(GameObject& partner) -> bool;
 	auto setHydration(float)->void;
 	auto setNutrition(float)->void;
 	auto setTimeOfStartOfPregnancy(float) -> void;
 	auto setNumberOfFetuses(int) -> void;
 	auto getNumberOfFetuses() -> int;
 	auto getMaxMultipleBirth() -> int;
-	auto die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
+	auto removeObject(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
 	auto isDead() -> bool;
 	auto consumeTime(float fps) -> void;
 	virtual void act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps);
+	Type getType();
 
 	virtual ~Animal();
 

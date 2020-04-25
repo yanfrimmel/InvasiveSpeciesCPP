@@ -2,6 +2,15 @@
 
 Uint32 GameObject::_idGenerator = 0;
 
+void GameObject::removeObject(std::vector<std::unique_ptr<GameObject>>& gameObjects)
+{
+	auto end = std::remove_if(gameObjects.begin(), gameObjects.end(),
+		[this](std::unique_ptr<GameObject> & o) {
+		return this->getId() == o->getId();
+	});
+	gameObjects.erase(end, gameObjects.end());
+}
+
 GameObject::GameObject(Uint32 size, Uint32 speed, Vector2d<float> position, TileType tileType)
 	: _size(size), _speed(speed), _position{ position }, _tileType(tileType) {
 	_id = _idGenerator++; // TODO: load last value from file
