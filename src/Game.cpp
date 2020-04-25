@@ -68,6 +68,7 @@ auto Game::handleMouseState(float fps) -> void {
 		{ _gameState->getPlayer().getPosition().x - halfWindowWidth, _gameState->getPlayer().getPosition().y - halfWindowHeight });
 		_gameState->getPlayer().onDestinationSelected(
        { _mouseInput->mouseX + (int)_gameState->getCamera().x, _mouseInput->mouseY + (int)_gameState->getCamera().y }, fps);
+		_gameState->getPlayer().validatePosition();
 	}
 }
 
@@ -94,7 +95,7 @@ auto Game::gameLoop(Uint32 fpsCap) -> void {
 }
 
 auto Game::loadMap(const char *filename) -> void {
-	int current, mx, my, mw, mh;
+	/*int current, mx, my, mw, mh;
 	std::ifstream in(filename);
 	if (!in.is_open()) {
 		std::cout << "Failed to open map file." << std::endl;
@@ -119,7 +120,7 @@ auto Game::loadMap(const char *filename) -> void {
 			}
 		}
 	}
-	in.close();
+	in.close();*/
 }
 
 Game::~Game() { std::cout << "Game destructor" << std::endl; }

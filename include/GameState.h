@@ -2,6 +2,7 @@
 
 #include "GameObject.h"
 #include "Human.h"
+#include "Grass.h"
 
 class GameState {
 private:

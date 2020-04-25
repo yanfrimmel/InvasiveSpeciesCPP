@@ -22,9 +22,11 @@ public:
 	auto getPosition()->Vector2d<float> &;
 	auto getTileType()->TileType;
 	auto getSize()->Uint32;
+	auto getId()->Uint32;
 	auto onDestinationSelected(Vector2d<int> point, float fps) -> void;
 	auto isReachedDestination(Vector2d<int> destination) -> bool;
 	auto setAsPlayer() -> void;
 	auto validatePosition() -> void;
+	virtual void act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps) = 0;
 	virtual ~GameObject();
 };

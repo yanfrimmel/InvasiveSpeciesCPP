@@ -9,15 +9,57 @@ public:
 	enum Gender { male, female };
 	enum Diet { herbivore, omnivore, carnivore };
 	enum Behavior { lonesome, social, humanoid };
+	enum Species {human, chicken};
+
+	Animal(Uint32 size, Uint32 speed, Vector2d<float> position, TileType tileType);
+	auto getSpecies()->Species;
+	auto getGender()->Gender;
+	auto getDiet()->Diet;
+	auto getBehavior()->Behavior;
+	auto isSleeping()->bool;
+	auto getHp()-> float;
+	auto getStrength()->float;
+	auto getAgility()->float;
+	auto getSight()->float;
+	auto getMass()->float;
+	auto getMemoerySize()->int;
+	auto getHydration()->float;
+	auto getNutrition()->float;
+	auto getAge()->float;
+	auto getMemory()->std::vector<Memory>&;
+	auto attack(Animal& victim)->void;
+	auto tryToEat(GameObject& food)->void;
+	auto eat(GameObject& food)->void;
+	auto goToSleep()->void; // this will recover hp
+	auto awake()->void;
+	auto mateWith(Animal& partner) -> void;
+	void tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& gameObjects);
+	virtual std::unique_ptr<Animal> createNewAnimal(Gender gender, Vector2d<float> position) = 0;
+	auto tryToRemember(GameObject& objectToRemeber)->void; // if reached max memory size forget the oldest memory
+	auto isInSight(GameObject& object) -> bool;
+	auto tryToMate(Animal& partner) -> bool;
+	auto setHydration(float)->void;
+	auto setNutrition(float)->void;
+	auto setTimeOfStartOfPregnancy(float) -> void;
+	auto setNumberOfFetuses(int) -> void;
+	auto getNumberOfFetuses() -> int;
+	auto getMaxMultipleBirth() -> int;
+	auto die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
+	auto isDead() -> bool;
+	auto consumeTime(float fps) -> void;
+	virtual void act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps);
+
+	virtual ~Animal();
 
 protected:
 	float _MAX_HP = 100;
 	float _MAX_HYDRATION = 100;
 	float _MAX_NUTRITION = 100;
 	int _MAX_MULTIPLE_BIRTH = 10;
-	float _PREGNANCY_TIME = 10; // 1 = minute
+	float _PREGNANCY_TIME = 10; // 1 = second
 	Vector2d<float> _targetPosition;
 	Gender _gender;
+	Species _species;
 	Diet _diet;
 	Behavior _behavior;
 	float _hp; // 0 is dead, up to species limit
@@ -35,52 +77,5 @@ protected:
 	std::vector<Memory> _memory; // objects that the animal "remembers" as they were when he/she last saw them
 	auto resetTargetPosition() -> void;
 	auto hasTargetPostion() -> bool;
-//protected:
-//	auto setGender(Gender)->void;
-//	auto setDiet(Diet)->void;
-//	auto setBehavior(Behavior)->void;
-//	auto setSleeping(bool)->void;
-//	auto setHp(float)->void;
-//	auto setStrength(float)->void;
-//	auto setAgility(float)->void;
-//	auto setSight(float)->void;
-//	auto setMass(float)->void;
-//	auto setMemorySize(int)->void;
-
-public:
-	Animal(Uint32 size, Uint32 speed, Vector2d<float> position, TileType tileType);
-	auto isDead() -> bool;
-	auto getGender()->Gender;
-	auto getDiet()->Diet;
-	auto getBehavior()->Behavior;
-	auto isSleeping()->bool;
-	auto getHp()-> float;
-	auto getStrength()->float;
-	auto getAgility()->float;
-	auto getSight()->float;
-	auto getMass()->float;
-	auto getMemoerySize()->int;
-	auto getHydration()->float;
-	auto getNutrition()->float;
-	auto getAge()->float;
-	auto getMemory()->std::vector<Memory>&;
-	auto attack(Animal& victim)->void;
-	auto eat(GameObject& food)->void;
-	auto goToSleep()->void; // this will recover hp
-	auto awake()->void;
-	auto mateWith(Animal& partner) -> void;
-	virtual void think(std::vector<std::unique_ptr<GameObject>>& objectsInSight, float fps) = 0;
-	virtual void tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& gameObjects) = 0;
-	auto tryToRemember(GameObject objectToRemeber)->void; // if reached max memory size forget the oldest memory
-	auto isInSight(GameObject& object) -> bool;
-	auto tryToMate(Animal& partner) -> bool;
-	auto setHydration(float)->void;
-	auto setNutrition(float)->void;
-	auto setTimeOfStartOfPregnancy(float) -> void;
-	auto setNumberOfFetuses(int) -> void;
-	auto getNumberOfFetuses() -> int;
-	auto getMaxMultipleBirth() -> int;
-	
-	virtual ~Animal();
 };
 

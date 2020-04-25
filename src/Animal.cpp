@@ -16,6 +16,11 @@ Animal::Animal(Uint32 size, Uint32 speed, Vector2d<float> position, TileType til
 	resetTargetPosition();
 }
 
+auto Animal::getSpecies() -> Species
+{
+	return _species;
+}
+
 auto Animal::getMaxMultipleBirth() -> int
 {
 	return _MAX_MULTIPLE_BIRTH;
@@ -23,7 +28,68 @@ auto Animal::getMaxMultipleBirth() -> int
 
 auto Animal::isDead() -> bool
 {
-	return getHp() <= 0;
+	return _hp <= 0;
+}
+
+auto Animal::die(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
+{
+	std::cout << "death: " << this->getId() << std::endl;
+	auto end = std::remove_if(gameObjects.begin(), gameObjects.end(),
+		[this](std::unique_ptr<GameObject> & o) {
+		return this->getId() == o->getId();
+	});
+	gameObjects.erase(end, gameObjects.end());
+}
+
+auto Animal::consumeTime(float fps) -> void
+{
+	auto timePassed = 1 / fps;
+	_age += timePassed;
+	if(_hydration > 0) _hydration -= timePassed;
+	else _hp -= timePassed;
+	if (_nutrition > 0) _nutrition -= timePassed;
+	else _hp -= timePassed;
+
+}
+
+void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
+{
+	if (isDead()) {
+		die(gameObjects);
+		return;
+	}
+
+	consumeTime(fps);
+
+	if (_gender == female && _numberOfFetuses > 0) {
+		tryGiveLabor(gameObjects);
+	}
+
+	if (_isPlayer) return;
+
+	for (auto& obj : gameObjects) {
+		if (this != obj.get() && isInSight(*obj.get()) && ((Animal*)obj.get())->getSpecies() == _species) {
+			auto mate = ((Animal*)obj.get());
+			if (tryToMate(*mate)) {
+				onDestinationSelected(mate->getPosition(), fps);
+				if (isReachedDestination(mate->getPosition())) {
+					mateWith(*mate);
+				}
+				resetTargetPosition();
+				return;
+			}
+		}
+	}
+
+	if (!hasTargetPostion()) {
+		_targetPosition = { globalParams::worldWidth * globalRNG::rng(), globalParams::worldHeight * globalRNG::rng() };
+		//std::cout << "id: " << _id << ", _targetPosition: " << _targetPosition.x << ", " << _targetPosition.y << std::endl;
+	}
+
+	if (isReachedDestination(_targetPosition)) {
+		resetTargetPosition();
+	}
+	onDestinationSelected(_targetPosition, fps);
 }
 
 auto Animal::getGender() -> Gender
@@ -126,25 +192,24 @@ auto Animal::tryToMate(Animal & partner) -> bool
 	return typeid(*this) == typeid(partner) &&
 		_gender == male &&
 		_hp == _MAX_HP &&
+		partner.getGender() == female &&
+		partner._numberOfFetuses == 0 &&
 		_hydration >= _MAX_HYDRATION / 4 &&
-		_nutrition >= _MAX_NUTRITION / 4 &&
-		partner.getGender() == female && 
-		partner._numberOfFetuses == 0;
+		_nutrition >= _MAX_NUTRITION / 4;
 }
 
 void Animal::mateWith(Animal & partner)
 {
-	this->_hydration /= 2; // TODO: find a better way
-	this->_nutrition /= 2; // TODO: find a better way
-	partner.setHydration(partner.getHydration() / 2);
-	partner.setNutrition(partner.getNutrition() / 2);
+	this->_hydration -= _MAX_HYDRATION / 4; // TODO: find a better way
+	this->_nutrition -= _MAX_NUTRITION / 4; // TODO: find a better way
+	partner.setHydration(partner.getHydration() - _MAX_HYDRATION / 4);
+	partner.setNutrition(partner.getNutrition() - _MAX_NUTRITION / 4);
 	if (partner.getNumberOfFetuses() > 0) return;
 	auto chanceOfPregnancy = globalRNG::rng();
-	if (chanceOfPregnancy > 0.5) {
+	if (chanceOfPregnancy > 0.5) { // TODO: change this
 		partner.setTimeOfStartOfPregnancy(partner.getAge());
 		auto fetuses = (float)partner.getMaxMultipleBirth() *  globalRNG::rng();
 		partner.setNumberOfFetuses((int)fetuses);
-		std::cout << "fetuses: " << fetuses << std::endl;
 	}
 }
 
@@ -201,6 +266,30 @@ auto Animal::getMemory() -> std::vector<Memory>&
 auto Animal::getNumberOfFetuses() -> int
 {
 	return _numberOfFetuses;
+}
+
+void Animal::tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& objectList)
+{
+	if (_PREGNANCY_TIME + _timeOfStartOfPregnancy <= _age) {
+		while (_numberOfFetuses > 0) {
+			auto chanceOfMale = globalRNG::rng();
+			Animal::Gender gender;
+			if (chanceOfMale > 0.5) {
+				gender = male;
+			}
+			else {
+				gender = female;
+			}
+			objectList.emplace_back(createNewAnimal(gender,
+				getPosition() + Vector2d<int>(_numberOfFetuses, _numberOfFetuses) * _size / 2));
+			std::cout << "objectList size: " << objectList.size() << std::endl;
+			std::cout << "birth: " << gender << std::endl;
+			--_numberOfFetuses;
+		}
+		_hp -= _MAX_HP / 2;
+		_timeOfStartOfPregnancy = 0;
+		_numberOfFetuses = 0;
+	}
 }
 
 //void Animal::think(std::vector<GameObject> objectsInSight, float fps) {

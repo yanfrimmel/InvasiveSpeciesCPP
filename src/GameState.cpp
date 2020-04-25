@@ -3,15 +3,16 @@
 GameState::GameState(unsigned short int windowWidth, unsigned short int windowHeight)
 {
 	//TODO: init positions from a map file
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 500, 900 }, CHICKEN_FEMALE));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 464, 900 }, CHICKEN_MALE));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 700, 800 }, WATER));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 732, 800 }, WATER));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 660 , 1600 }, STONE));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 700 }, GRASS));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 732 }, GRASS));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 700 }, GRASS));
-	_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 732 }, GRASS));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 500, 900 }, CHICKEN_FEMALE));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 464, 900 }, CHICKEN_MALE));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 700, 800 }, WATER));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 732, 800 }, WATER));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 660 , 1600 }, STONE));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 700 }, GRASS));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1700 , 732 }, GRASS));
+	//_gameObjects.emplace_back(new GameObject(DEFAULT_OBJECT_SIZE, 200, { 1732 , 700 }, GRASS));
+	_gameObjects.emplace_back(new Grass({ 700 , 650 }));
+	_gameObjects.emplace_back(new Grass({ 550 , 500 }));
 	_gameObjects.emplace_back(new Human(Animal::male, { 400, 600 }));
 	_gameObjects.emplace_back(new Human(Animal::female, { 600, 700 }));
 	_player = _gameObjects.back().get();
@@ -39,9 +40,8 @@ auto GameState::updateGameObjects(float fps) -> void
 	if (fps <= 0) return;
 	for (unsigned int i = 0; i < _gameObjects.size(); i++) {
 		auto & gameObjecet = _gameObjects[i];
-		if (dynamic_cast<Animal*> (gameObjecet.get())) {
-			Animal* animal = ((Animal*)gameObjecet.get());
-			animal->think(_gameObjects, fps);
+		if ((gameObjecet.get())) {
+			gameObjecet.get()->act(_gameObjects, fps);
 		}
 	}
 }
