@@ -3,6 +3,7 @@
 #include "GameObject.h"
 #include "Memory.h"
 #include "Plant.h"
+#include "Water.h"
 
 class Animal : public GameObject {
 
@@ -30,6 +31,7 @@ public:
 	auto getMemory()->std::vector<Memory>&;
 	auto attack(Animal& victim)->void;
 	virtual bool tryToEat(GameObject& food) = 0;
+	virtual bool tryToDrink(GameObject& water);
 	auto beEaten(float nutrition) -> float;
 	auto goToSleep()->void; // this will recover hp
 	auto awake()->void;

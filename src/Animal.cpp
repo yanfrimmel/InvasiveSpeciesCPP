@@ -75,6 +75,20 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 				return;
 			}
 
+			if (tryToDrink(*obj.get())) {
+				onDestinationSelected(obj->getPosition(), fps);
+				if (isReachedDestination(obj->getPosition())) {
+					if (obj.get()->getType() == water) {
+						auto water = (Water*)obj.get();
+						std::cout << _id << ": hydration: " << _hydration << "drink: " << obj.get()->getId() << std::endl;
+						_hydration += ((Water*)obj.get())->drink(_MAX_HYDRATION - _hydration, gameObjects);
+						std::cout << _id << ": hydration: " << _hydration << "after: " << std::endl;
+					}
+				}
+				resetTargetPosition();
+				return;
+			}
+
 			if (tryToEat(*obj.get())) {
 				onDestinationSelected(obj->getPosition(), fps);
 				if (isReachedDestination(obj->getPosition())) {
@@ -82,7 +96,7 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 						auto mate = (Plant*)obj.get();
 						std::cout << _id << ": nutrition: "<< _nutrition << "eats: " << obj.get()->getId() << std::endl;
 						_nutrition += ((Plant*)obj.get())->beEaten(_MAX_NUTRITION - _nutrition);
-						std::cout << _id << ": nutrition: " << _nutrition << "aftwe: " << std::endl;
+
 					}
 				}
 				resetTargetPosition();
@@ -93,7 +107,6 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 
 	if (!hasTargetPostion()) {
 		_targetPosition = { globalParams::worldWidth * globalRNG::rng(), globalParams::worldHeight * globalRNG::rng() };
-		//std::cout << "id: " << _id << ", _targetPosition: " << _targetPosition.x << ", " << _targetPosition.y << std::endl;
 	}
 
 	if (isReachedDestination(_targetPosition)) {
@@ -175,7 +188,7 @@ auto Animal::mateWith(Animal & partner) -> void
 	partner.setNutrition(partner.getNutrition() - _MAX_NUTRITION / 4);
 	if (partner.getNumberOfFetuses() > 0) return;
 	auto chanceOfPregnancy = globalRNG::rng();
-	if (chanceOfPregnancy > 0.5) { // TODO: change this
+	if (chanceOfPregnancy > 0.5) {
 		partner.setTimeOfStartOfPregnancy(partner.getAge());
 		auto fetuses = (float)partner.getMaxMultipleBirth() *  globalRNG::rng();
 		partner.setNumberOfFetuses((int)fetuses);
@@ -232,9 +245,14 @@ auto Animal::getMemory() -> std::vector<Memory>&
 	return _memory;
 }
 
+bool Animal::tryToDrink(GameObject & object)
+{
+	return  object.getType() == water && _hydration < _MAX_HYDRATION / 2;
+}
+
 auto Animal::beEaten(float nutrition) -> float
 {
-	return 0.0F;
+	return 0.0F; //TODO: implement
 
 }
 
@@ -266,10 +284,6 @@ void Animal::tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& objectList)
 		_numberOfFetuses = 0;
 	}
 }
-
-//void Animal::think(std::vector<GameObject> objectsInSight, float fps) {
-//	std::cout << "shit" << std::endl;
-//};
 
 Animal::~Animal()
 {

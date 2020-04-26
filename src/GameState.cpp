@@ -15,9 +15,10 @@ GameState::GameState(unsigned short int windowWidth, unsigned short int windowHe
 	_gameObjects.emplace_back(new Grass({ 1600 , 1650 }));
 	_gameObjects.emplace_back(new Grass({ 200 , 200 }));
 	_gameObjects.emplace_back(new Grass({ 1600 , 200 }));
-	_gameObjects.emplace_back(new Water(32, { 350 , 500 }));
-	_gameObjects.emplace_back(new Human(Animal::male, { 400, 600 }));
-	_gameObjects.emplace_back(new Human(Animal::female, { 600, 700 }));
+	_gameObjects.emplace_back(new Grass({ 1600 , 200 }));
+	_gameObjects.emplace_back(new Water(32, { 450 , 500 }));
+	_gameObjects.emplace_back(new Human(Animal::male, { 900, 600 }));
+	_gameObjects.emplace_back(new Human(Animal::female, { 1100, 700 }));
 	_player = _gameObjects.back().get();
 	_player->setAsPlayer();
 

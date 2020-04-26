@@ -2,13 +2,13 @@
 #include "Common.h"
 
 Human::Human(Gender gender, Vector2d<float> position) :
-	Animal(32, gender == male ? 400 : 395, position, gender == male ? HUMAN_MALE : HUMAN_FEMALE)
+	Animal(32, gender == male ? 100 : 95, position, gender == male ? HUMAN_MALE : HUMAN_FEMALE)
 {
 	_species = human;
 	_MAX_HP = 100;
 	_MAX_HYDRATION = 100;
 	_MAX_NUTRITION = 100;
-	_PREGNANCY_TIME = 20; //seconds 
+	_PREGNANCY_TIME = 90; //seconds 
 	_gender = gender;
 	_hp = _MAX_HP;
 	_hydration = _MAX_HYDRATION;
