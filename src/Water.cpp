@@ -13,7 +13,7 @@ float Water::drink(float hydration, std::vector<std::unique_ptr<GameObject>>& ga
 	else
 	{
 		removeObject(gameObjects);
-		return hydration - _mass;
+		return _mass;
 	}
 }
 

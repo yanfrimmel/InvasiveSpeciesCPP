@@ -81,5 +81,9 @@ protected:
 	std::vector<Memory> _memory; // objects that the animal "remembers" as they were when he/she last saw them
 	auto resetTargetPosition() -> void;
 	auto hasTargetPostion() -> bool;
+	virtual void playerAct(std::vector<std::unique_ptr<GameObject>>& gameObjects);
+	virtual void aiAct(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps);
+	auto drink(Water& water, std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void;
+	auto eatPlant(Plant& food) -> void;
 };
 

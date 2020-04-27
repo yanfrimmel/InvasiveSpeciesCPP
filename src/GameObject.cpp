@@ -32,12 +32,12 @@ auto GameObject::getId() -> Uint32
 }
 
 auto GameObject::onDestinationSelected(Vector2d<int> selectedPosition, float fps) -> void {
-	if (!isReachedDestination(selectedPosition)) {
+	/*if (!isReachedDestination(selectedPosition)) {*/
 		float elapsed = 1 / fps;
 		auto direction = Vector2d<float>::normal((Vector2d<float>)selectedPosition - _position);
 		auto newPosition = _position + ((Vector2d<float>)direction * (float)_speed * elapsed);
 		_position = newPosition;
-	}
+	//}
 }
 
 auto GameObject::isReachedDestination(Vector2d<int> destination) -> bool

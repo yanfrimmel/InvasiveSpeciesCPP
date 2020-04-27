@@ -21,7 +21,7 @@ void Plant::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps
 
 auto Plant::consumeTime(float fps) -> void
 {
-	_hp += 1 / (fps * _grothRate);
+	_hp += _growthRate * 1 / fps;
 }
 
 auto Plant::tryToReproduce() -> bool

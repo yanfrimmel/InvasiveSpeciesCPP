@@ -42,10 +42,14 @@ auto Animal::consumeTime(float fps) -> void
 	auto timePassed = 1 / fps;
 	_age += timePassed;
 	if(_hydration > 0) _hydration -= timePassed;
-	else _hp -= timePassed;
+	else {
+		_hp -= timePassed;
+	}
 	if (_nutrition > 0) _nutrition -= timePassed;
-	else _hp -= timePassed;
-
+	else {
+		_hp -= timePassed;
+	}
+	if (_hydration > 0 && _nutrition > 0 && _hp <= _MAX_HP - timePassed) _hp += timePassed;
 }
 
 void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
@@ -61,12 +65,46 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 		tryGiveLabor(gameObjects);
 	}
 
-	if (_isPlayer) return;
+	if (_isPlayer) {
+		playerAct(gameObjects);
+	}
 
+	else {
+		aiAct(gameObjects, fps);
+	}
+}
+
+void Animal::playerAct(std::vector<std::unique_ptr<GameObject>>& gameObjects)
+{
+	for (auto& obj : gameObjects) {
+		if (isReachedDestination(obj->getPosition())) {
+			if (tryToMate(*obj.get())) {
+				if (isReachedDestination(obj.get()->getPosition())) {
+					auto mate = (Animal*)obj.get();
+					mateWith(*mate);
+				}
+				return;
+			}
+			if (obj.get()->getType() == water) {
+				auto water = (Water*)obj.get();
+				drink(*water, gameObjects);
+				return;
+			}
+			if (obj.get()->getType() == plant) { //TODO: implement for animal
+				auto food = (Plant*)obj.get();
+				eatPlant(*food);
+				return;
+			}
+		}
+	}
+}
+
+void Animal::aiAct(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
+{
 	for (auto& obj : gameObjects) {
 		if (this != obj.get() && isInSight(*obj.get())) {
 			if (tryToMate(*obj.get())) {
-				onDestinationSelected(obj.get()->getPosition(), fps);
+				onDestinationSelected(obj->getPosition(), fps);
 				if (isReachedDestination(obj.get()->getPosition())) {
 					auto mate = (Animal*)obj.get();
 					mateWith(*mate);
@@ -78,12 +116,8 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 			if (tryToDrink(*obj.get())) {
 				onDestinationSelected(obj->getPosition(), fps);
 				if (isReachedDestination(obj->getPosition())) {
-					if (obj.get()->getType() == water) {
-						auto water = (Water*)obj.get();
-						std::cout << _id << ": hydration: " << _hydration << "drink: " << obj.get()->getId() << std::endl;
-						_hydration += ((Water*)obj.get())->drink(_MAX_HYDRATION - _hydration, gameObjects);
-						std::cout << _id << ": hydration: " << _hydration << "after: " << std::endl;
-					}
+					auto water = (Water*)obj.get();
+					drink(*water, gameObjects);
 				}
 				resetTargetPosition();
 				return;
@@ -93,10 +127,8 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 				onDestinationSelected(obj->getPosition(), fps);
 				if (isReachedDestination(obj->getPosition())) {
 					if (obj.get()->getType() == plant) { //TODO: implement for animal
-						auto mate = (Plant*)obj.get();
-						std::cout << _id << ": nutrition: "<< _nutrition << "eats: " << obj.get()->getId() << std::endl;
-						_nutrition += ((Plant*)obj.get())->beEaten(_MAX_NUTRITION - _nutrition);
-
+						auto food = (Plant*)obj.get();
+						eatPlant(*food);
 					}
 				}
 				resetTargetPosition();
@@ -113,6 +145,24 @@ void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fp
 		resetTargetPosition();
 	}
 	onDestinationSelected(_targetPosition, fps);
+}
+
+auto Animal::drink(Water & water, std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void
+{
+	if (_MAX_HYDRATION - _hydration > 1) {
+		std::cout << _id << ": hydration: " << _hydration << ", drink: " << water.getId() << std::endl;
+		_hydration += water.drink(_MAX_HYDRATION - _hydration, gameObjects);
+		std::cout << _id << ": hydration: " << _hydration << ", after" << std::endl;
+	}
+}
+
+auto Animal::eatPlant(Plant & food) -> void
+{
+	if (_MAX_NUTRITION - _nutrition > 1) {
+		std::cout << _id << ": nutrition: " << _nutrition << ", eats: " << food.getId() << std::endl;
+		_nutrition += food.beEaten(_MAX_NUTRITION - _nutrition);
+		std::cout << _id << ": nutrition: " << _nutrition << ", after" << std::endl;
+	}
 }
 
 GameObject::Type Animal::getType()
@@ -189,8 +239,10 @@ auto Animal::mateWith(Animal & partner) -> void
 	if (partner.getNumberOfFetuses() > 0) return;
 	auto chanceOfPregnancy = globalRNG::rng();
 	if (chanceOfPregnancy > 0.5) {
+
 		partner.setTimeOfStartOfPregnancy(partner.getAge());
 		auto fetuses = (float)partner.getMaxMultipleBirth() *  globalRNG::rng();
+		std::cout << "successfully pregrancy fetuses: " << fetuses << std::endl;
 		partner.setNumberOfFetuses((int)fetuses);
 	}
 }

@@ -8,7 +8,15 @@ C++ implementation for [InvasiveSpecies](https://github.com/yanfrimmel/InvasiveS
 * Tile based grid.
 * Player avatar follows mouse press.
 * Frames per seconds counter.
-* Camera that follows the player in world coordinates
+* Camera that follows the player in world coordinates.
+* A living world: 
+    * NPC's can eat.
+    * NPC's can drink.
+    * NPC's can reproduce.
+    * NPC's travel to random directions.
+    * Plants grow with time providing food for the animals.
+* Player can eat, drink, and reproduce by moving close to the appropriate game objects.    
+
 * Will be continued...
 
 ## How to use

@@ -15,7 +15,7 @@ public:
 
 protected:
 	float _grothSparsityIndex = 4;
-	float _grothRate = 10; //seconds multiplayer
+	float _growthRate = 1; //seconds hp per second recovery
 	Species _species;
 	float _MAX_HP_BEFORE_REPRODUCTION = 10; 
 	float _hp = 1; // also the amount of nutrition provided once eaten

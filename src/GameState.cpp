@@ -3,9 +3,9 @@
 GameState::GameState(unsigned short int windowWidth, unsigned short int windowHeight)
 {
 	//TODO: init positions from a map file
-	_gameObjects.emplace_back(new Grass({ 700 , 650 }));
-	_gameObjects.emplace_back(new Grass({ 1732 , 650 }));
-	_gameObjects.emplace_back(new Grass({ 550 , 1500 }));
+	_gameObjects.emplace_back(new Grass({ 100 , 150 }));
+	_gameObjects.emplace_back(new Grass({ 1732 , 350 }));
+	_gameObjects.emplace_back(new Grass({ 550 , 1700 }));
 	_gameObjects.emplace_back(new Grass({ 660 , 590 }));
 	_gameObjects.emplace_back(new Grass({ 670 , 1520 }));
 	_gameObjects.emplace_back(new Grass({ 770 , 1520 }));
@@ -13,12 +13,14 @@ GameState::GameState(unsigned short int windowWidth, unsigned short int windowHe
 	_gameObjects.emplace_back(new Grass({ 580 , 620 }));
 	_gameObjects.emplace_back(new Grass({ 570 , 650 }));
 	_gameObjects.emplace_back(new Grass({ 1600 , 1650 }));
-	_gameObjects.emplace_back(new Grass({ 200 , 200 }));
+	_gameObjects.emplace_back(new Grass({ 1000 , 100 }));
 	_gameObjects.emplace_back(new Grass({ 1600 , 200 }));
-	_gameObjects.emplace_back(new Grass({ 1600 , 200 }));
+	_gameObjects.emplace_back(new Grass({ 1600 , 1700 }));
 	_gameObjects.emplace_back(new Water(32, { 450 , 500 }));
+	_gameObjects.emplace_back(new Water(32, { 1450 , 1200 }));
 	_gameObjects.emplace_back(new Human(Animal::male, { 900, 600 }));
 	_gameObjects.emplace_back(new Human(Animal::female, { 1100, 700 }));
+	_gameObjects.emplace_back(new Human(Animal::male, { 900, 700 }));
 	_player = _gameObjects.back().get();
 	_player->setAsPlayer();
 
