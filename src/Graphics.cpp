@@ -61,7 +61,7 @@ auto Graphics::createRenderer() -> SDL_Renderer * {
 		quitSdl();
 		return nullptr;
 	}
-
+	SDL_SetRenderDrawColor(renderer, 130, 72, 38, 255); // set background color (brown for soil)
 	return renderer;
 }
 
@@ -94,7 +94,7 @@ auto Graphics::presentRender() -> void { SDL_RenderPresent(_renderer.get()); }
 auto Graphics::renderGrid(
 	const std::vector<std::pair<TileType, SDL_Rect>> &gameObjectsPositionsMap)
 	-> void {
-	renderGridBackground();
+	//renderGridBackground(); //using SDL_SetRenderDrawColor instead
 	renderGameObjects(gameObjectsPositionsMap);
 }
 
@@ -112,23 +112,15 @@ auto Graphics::renderGameObjects(
 }
 
 auto Graphics::renderGridBackground() -> void {
-	// printf("renderGridBackground\n");
 	int tileWidth = _baseTile->rect->w;
 	int tileHeight = _baseTile->rect->h;
 	_baseTile->texture = (*_textures)[SOIL];
-	for (Uint32 i = 0; i < _windowWidth; i += tileWidth) {
-		for (Uint32 j = 0; j < _windowHeight; j += tileHeight) {
-			_baseTile->rect->x = i;
-			_baseTile->rect->y = j;
-			renderTexture(_baseTile.get());
-		}
-	}
+	SDL_RenderCopy(_renderer.get(), _baseTile->texture, nullptr, nullptr);
 }
 
 auto Graphics::renderTexture(RectAndTexture *rectAndTexture) -> void {
 	SDL_QueryTexture(rectAndTexture->texture, nullptr, nullptr, &rectAndTexture->rect->w, &rectAndTexture->rect->h);
-	SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, nullptr,
-		rectAndTexture->rect);
+	SDL_RenderCopy(_renderer.get(), rectAndTexture->texture, nullptr, rectAndTexture->rect);
 }
 
 auto Graphics::getImagePathStringByTileType(TileType tileType) -> const char * {

@@ -30,9 +30,8 @@ private:
 	static auto createRectFromTexture(SDL_Texture *texture)->RectAndTexture *;
 	auto loadTexture(const char *imagePath)->SDL_Texture *;
 	auto renderTexture(RectAndTexture *rectAndTexture) -> void;
-	auto renderGameObjects(const std::vector<std::pair<TileType, SDL_Rect>>
-		&gameObjectsPositionsMap) -> void;
-	auto renderGridBackground() -> void;
+	auto renderGameObjects(const std::vector<std::pair<TileType, SDL_Rect>> &gameObjectsPositionsMap) -> void;
+	auto renderGridBackground() -> void; // render background image under game objects
 	auto createBaseRect()->RectAndTexture *;
 	static auto getFontFromFile(const char *file, int ptsize)->TTF_Font *;
 	static auto createRegularFont()->TTF_Font *;

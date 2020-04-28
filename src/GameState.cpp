@@ -16,8 +16,14 @@ GameState::GameState(unsigned short int windowWidth, unsigned short int windowHe
 	_gameObjects.emplace_back(new Grass({ 1000 , 100 }));
 	_gameObjects.emplace_back(new Grass({ 1600 , 200 }));
 	_gameObjects.emplace_back(new Grass({ 1600 , 1700 }));
-	_gameObjects.emplace_back(new Water(32, { 450 , 500 }));
-	_gameObjects.emplace_back(new Water(32, { 1450 , 1200 }));
+	_gameObjects.emplace_back(new Water(32, { 100 , 100 }));
+	_gameObjects.emplace_back(new Water(32, { 1000 , 1016 }));
+	_gameObjects.emplace_back(new Water(32, { 1016 , 1000 }));
+	_gameObjects.emplace_back(new Water(32, { 1016 , 1016 }));
+	_gameObjects.emplace_back(new Water(32, { 1000 , 1000 }));
+	_gameObjects.emplace_back(new Grass({ 1060 , 1030 }));
+	_gameObjects.emplace_back(new Grass({ 1040 , 1032 }));
+	_gameObjects.emplace_back(new Grass({ 1000 , 1050 }));
 	_gameObjects.emplace_back(new Human(Animal::male, { 900, 600 }));
 	_gameObjects.emplace_back(new Human(Animal::female, { 1100, 700 }));
 	_gameObjects.emplace_back(new Human(Animal::male, { 900, 700 }));
