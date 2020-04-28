@@ -11,8 +11,8 @@ Human::Human(Gender gender, Vector2d<float> position) :
 	_PREGNANCY_TIME = 90; //seconds 
 	_gender = gender;
 	_hp = _MAX_HP;
-	_hydration = _MAX_HYDRATION;
-	_nutrition = _MAX_NUTRITION;
+	_hydration = _MAX_HYDRATION/2;
+	_nutrition = _MAX_NUTRITION/2;
 	_sight = 300;
 	_diet = omnivore;
 	if (_gender == male) {

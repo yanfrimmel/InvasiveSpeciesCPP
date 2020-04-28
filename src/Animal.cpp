@@ -239,7 +239,6 @@ auto Animal::mateWith(Animal & partner) -> void
 	if (partner.getNumberOfFetuses() > 0) return;
 	auto chanceOfPregnancy = globalRNG::rng();
 	if (chanceOfPregnancy > 0.5) {
-
 		partner.setTimeOfStartOfPregnancy(partner.getAge());
 		auto fetuses = (float)partner.getMaxMultipleBirth() *  globalRNG::rng();
 		std::cout << "successfully pregrancy fetuses: " << fetuses << std::endl;
@@ -325,7 +324,7 @@ void Animal::tryGiveLabor(std::vector<std::unique_ptr<GameObject>>& objectList)
 			else {
 				gender = female;
 			}
-			objectList.emplace_back(createNewAnimal(gender,
+			objectList.emplace(objectList.begin(), createNewAnimal(gender,
 				getPosition() + Vector2d<int>(_numberOfFetuses, _numberOfFetuses) * _size / 2));
 			std::cout << "objectList size: " << objectList.size() << std::endl;
 			std::cout << "birth: " << gender << std::endl;

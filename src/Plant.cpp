@@ -14,7 +14,7 @@ void Plant::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps
 
 	consumeTime(fps);
 
-	if (tryToReproduce()) {
+	if (gameObjects.size() <= 1000 && tryToReproduce()) { //TODO: find a better way to fix bad performance
 		reprodue(gameObjects);
 	}
 }
@@ -35,7 +35,7 @@ auto Plant::reprodue(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> v
 	auto yChance = globalRNG::rng();
 	auto positionChanceX = xChance * (xChance > 0.5 ? _grothSparsityIndex : -_grothSparsityIndex) * _size;
 	auto positionChanceY = yChance * (yChance > 0.5 ? _grothSparsityIndex : -_grothSparsityIndex) * _size;
-	gameObjects.emplace_back(createNewPlant(getPosition() + Vector2d<float>(positionChanceX, positionChanceY)));
+	gameObjects.emplace(gameObjects.begin(), createNewPlant(getPosition() + Vector2d<float>(positionChanceX, positionChanceY)));
 	_hp -= 1;
 	std::cout << "objectList size: " << gameObjects.size() << std::endl;
 	std::cout << "new plant: " << _species << std::endl;
