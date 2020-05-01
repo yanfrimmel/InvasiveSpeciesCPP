@@ -41,15 +41,16 @@ auto Animal::consumeTime(float fps) -> void
 {
 	auto timePassed = 1 / fps;
 	_age += timePassed;
-	if(_hydration > 0) _hydration -= timePassed;
+	auto metabolism = timePassed / 10;
+	if(_hydration > 0) _hydration -= metabolism;
 	else {
-		_hp -= timePassed;
+		_hp -= metabolism;
 	}
-	if (_nutrition > 0) _nutrition -= timePassed;
+	if (_nutrition > 0) _nutrition -= metabolism;
 	else {
-		_hp -= timePassed;
+		_hp -= metabolism;
 	}
-	if (_hydration > 0 && _nutrition > 0 && _hp <= _MAX_HP - timePassed) _hp += timePassed;
+	if (_hydration > 0 && _nutrition > 0 && _hp <= _MAX_HP - timePassed) _hp += metabolism;
 }
 
 void Animal::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps)
