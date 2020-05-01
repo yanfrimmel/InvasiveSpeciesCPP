@@ -13,7 +13,7 @@ namespace globalRNG
 	// (Note that the range is [inclusive, inclusive].)
 #ifdef _MSC_VER
 	auto rng = std::bind(std::uniform_real_distribution<float>{ 0.0F, 1.0F }, engine);
-#elif defined(_WIN32) || defined(WIN32)
+#else
 	auto rng = std::bind(std::uniform_real_distribution<float>{ 0.0F, 1.0F }, std::cref(engine));
 #endif
 }
