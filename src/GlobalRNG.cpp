@@ -11,5 +11,5 @@ namespace globalRNG
 	// "Filter" MT engine's output to generate pseudo-random float values,
 	// **uniformly distributed** on the closed interval [0, 1].
 	// (Note that the range is [inclusive, inclusive].)
-	auto rng = std::bind(std::uniform_real_distribution<float>{ 0.0F, 1.0F }, engine);
+    auto rng = std::bind(std::uniform_real_distribution<float>{ 0.0F, 1.0F }, std::cref(engine));
 }

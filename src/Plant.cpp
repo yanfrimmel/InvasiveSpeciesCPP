@@ -21,12 +21,12 @@ void Plant::act(std::vector<std::unique_ptr<GameObject>>& gameObjects, float fps
 
 auto Plant::consumeTime(float fps) -> void
 {
-	_hp += _growthRate * 1 / fps;
+    if(_hp <= _MAX_HP_BEFORE_REPRODUCTION) _hp += _growthRate * 1 / fps;
 }
 
 auto Plant::tryToReproduce() -> bool
 {
-	return _hp > _MAX_HP_BEFORE_REPRODUCTION;
+	return _hp >= _MAX_HP_BEFORE_REPRODUCTION;
 }
 
 auto Plant::reprodue(std::vector<std::unique_ptr<GameObject>>& gameObjects) -> void

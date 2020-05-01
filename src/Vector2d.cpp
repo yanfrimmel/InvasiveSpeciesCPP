@@ -64,8 +64,8 @@ auto Vector2d<T>::operator<=(const Vector2d<T> &v) const -> bool {
 	return (x * x + y * y) < (v.x * v.x + v.y * v.y) ||
 		(x * x + y * y) == (v.x * v.x + v.y * v.y);
 }
-
-auto Vector2d<float>::operator-() const -> Vector2d<float> {
+template <class T>
+auto Vector2d<T>::operator-() const -> Vector2d<T> {
 	return Vector2d(-x, -y);
 }
 

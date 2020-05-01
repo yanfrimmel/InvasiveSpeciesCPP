@@ -6,7 +6,7 @@ Grass::Grass(Vector2d<float> position) : Plant(32, position, GRASS)
 	_species = grass;
 	_MAX_HP_BEFORE_REPRODUCTION = 10;
 	_grothSparsityIndex = 4;
-	_growthRate = 0.5F;
+    _growthRate = 0.4F;
 }
 
 auto Grass::createNewPlant(Vector2d<float> position) -> std::unique_ptr<Plant>

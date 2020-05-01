@@ -112,8 +112,6 @@ auto Graphics::renderGameObjects(
 }
 
 auto Graphics::renderGridBackground() -> void {
-	int tileWidth = _baseTile->rect->w;
-	int tileHeight = _baseTile->rect->h;
 	_baseTile->texture = (*_textures)[SOIL];
 	SDL_RenderCopy(_renderer.get(), _baseTile->texture, nullptr, nullptr);
 }
